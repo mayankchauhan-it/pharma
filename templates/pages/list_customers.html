@@ -1,0 +1,263 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %} Add Customer {% endblock %}
+
+{% block extrastyle %}
+<style>
+    .limit-text {
+        max-width: 200px;
+        /* Set the desired maximum width for the cell */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        /* Add this if you want to indicate the cell is truncated */
+    }
+
+    .cur {
+        cursor: pointer
+    }
+
+    /* Custom CSS for smaller textareas */
+    #id_shipping_address,
+    #id_address {
+        height: 100px;
+        /* Adjust the height as needed */
+    }
+</style>
+{% endblock extrastyle %}
+
+{% block content %}
+
+
+<!-- Customer List -->
+<div class="header pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <!-- Container to wrap the table for responsive design -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card rounded">
+                                <!-- Card body -->
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="col-md-12 d-flex align-items-center justify-content-between">
+                                            <h3 class="h2 text-danger font-weight-bold">Customers List</h3>
+                                        </div>
+                                    </div>
+                                    {% comment %} <hr> {% endcomment %}
+                                    <!-- Table with responsive class -->
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <!-- Display these headers only on laptop and larger screens -->
+                                                    <th
+                                                        class="text-center text-uppercase text-secondary font-weight-bolder opacity-7 d-none d-lg-table-cell">
+                                                        No.</th>
+                                                    <th
+                                                        class="text-center text-uppercase text-secondary font-weight-bolder opacity-7 ">
+                                                        Company Name</th>
+                                                    <th
+                                                        class="text-center text-uppercase text-secondary font-weight-bolder opacity-7 d-none d-lg-table-cell">
+                                                        Phone No.</th>
+                                                    <th
+                                                        class="text-center text-uppercase text-secondary font-weight-bolder opacity-7 d-none d-lg-table-cell">
+                                                        Email Id</th>
+                                                    <th
+                                                        class="text-center text-uppercase text-secondary font-weight-bolder opacity-7 d-none d-lg-table-cell">
+                                                        GSTN</th>
+                                                    <th
+                                                        class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">
+                                                        Edit</th>
+                                                    <th
+                                                        class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">
+                                                        Delete</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                {% for data in customer_list %}
+                                                <tr>
+                                                    <!-- Display only the customer's name on tablet-sized screens -->
+                                                    <td class="text-center font-weight-bolder opacity-7 d-lg-none">
+                                                        {{ data.company_name }}</td>
+                                                    <!-- Display the rest of the data on laptop and larger screens -->
+                                                    <td
+                                                        class="text-center font-weight-bold opacity-7 d-none d-lg-table-cell">
+                                                        {{ forloop.counter }}</td>
+                                                    <td class="text-center font-weight-bold opacity-7 d-none d-lg-table-cell">{{ data.company_name }}</td>
+                                                    <td class="text-center font-weight-bold opacity-7 d-none d-lg-table-cell">{{data.mobile_no }}</td>
+                                                    <td class="text-center font-weight-bold opacity-7 d-none d-lg-table-cell">{{ data.email}}</td>
+                                                    <td class="text-center font-weight-bold opacity-7 d-none d-lg-table-cell">{{ data.gstn }}</td>
+                                                    <td class="text-center font-weight-bolder opacity-7">
+                                                        <!-- View Button -->
+                                                        <button id="updatecus" type='button'
+                                                            class="updatecus btn text-white font-weight-bold text-xs badge badge-sm bg-danger"
+                                                            data-toggle="modal" data-fid="{{ data.id }}"
+                                                            data-target="#viewCustomerModal{{ data.id }}">
+                                                            <span
+                                                                class="text-white font-weight-bold text-xs">View</span>
+                                                        </button>
+
+                                                        <!-- Edit Button -->
+                                                        <button id="updatecus" type='button'
+                                                            class="updatecus btn text-white font-weight-bold text-xs badge badge-sm bg-danger"
+                                                            data-toggle="modal" 
+                                                            data-target="#updateCustomerModal{{ data.id }}"
+                                                            data-original-title="Edit user"
+                                                            >
+                                                            <span
+                                                                class="text-white font-weight-bold text-xs">Edit</span>
+                                                        </button>
+                                                        
+
+                                                        {% comment %} <button type="button" data-toggle="modal"
+                                                            class="btn btn-sm btn-info" data-bs-toggle="modal"
+                                                            data-bs-target="#updateCustomerModal{{ customer.id }}">
+                                                            Update
+                                                        </button> {% endcomment %}
+                                                    </td>
+
+                                                    <!-- Delete Button  -->
+                                                    <td class="text-center font-weight-bolder opacity-7">
+                                                        <button
+                                                            class="btn text-secondary font-weight-bold text-xs badge badge-sm bg-danger">
+                                                            <a href="/admin/DeleteCustomer/{{ data.id }}"
+                                                                class="text-white font-weight-bold text-xs cur "
+                                                                data-toggle="tooltip"
+                                                                data-original-title="Delete user"
+                                                                onclick="return confirm('Are You Sure,You want to delete this data?');">Delete
+                                                        </button>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Update Customer Modals -->
+{% for customer in customer_list %}
+<div class="modal fade" id="updateCustomerModal{{ customer.id }}" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Customer</h5>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="/admin/update_customer/{{ customer.id }}">
+                    {% csrf_token %}
+
+                    <label for="company_name">Company Name</label>
+                    <input type="text" class="form-control" id="company_name" name="company_name"
+                        value="{{ customer.company_name }}"><br />
+
+                    <label for="customer_name">Customer Name</label>
+                    <input type="text" class="form-control" id="customer_name" name="customer_name"
+                        value="{{ customer.customer_name }}"><br />
+
+
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ customer.email }}"><br />
+
+                    <label for="mobile_no">Mobile Number</label>
+                    <input type="text" class="form-control" id="mobile_no" name="mobile_no"
+                        value="{{ customer.mobile_no }}"><br />
+
+                    <label for="address">Company Address</label>
+                    <textarea class="form-control" id="address" name="address"
+                        rows="3">{{ customer.address }}</textarea><br />
+
+                    <label for="shipping_address">Factory Address</label>
+                    <textarea class="form-control" id="shipping_address" name="shipping_address"
+                        rows="3">{{ customer.shipping_address }}</textarea><br />
+
+                    <label for="gstn">GSTN</label>
+                    <input type="text" class="form-control" id="gstn" name="gstn" value="{{ customer.gstn }}"><br />
+
+
+
+                    <button type="submit" class="btn btn-primary">Update Customer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+<!-- View Customer Modals -->
+{% for customer in customer_list %}
+<div class="modal fade" id="viewCustomerModal{{ customer.id }}" style='z-index: 9999;' role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Customer</h5>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="/admin/update_customer/{{ customer.id }}">
+                    {% csrf_token %}
+
+                    <label for="company_name">Company Name</label>
+                    <input type="text" class="form-control" id="company_name" name="company_name"
+                        value="{{ customer.company_name }}" disabled><br />
+
+                    <label for="customer_name">Customer Name</label>
+                    <input type="text" class="form-control" id="customer_name" name="customer_name"
+                        value="{{ customer.customer_name }}" disabled><br />
+
+
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ customer.email }}"
+                        disabled><br />
+
+                    <label for="mobile_no">Mobile Number</label>
+                    <input type="text" class="form-control" id="mobile_no" name="mobile_no"
+                        value="{{ customer.mobile_no }}" disabled><br />
+
+                    <label for="address">Company Address</label>
+                    <textarea class="form-control" id="address" name="address" rows="3"
+                        disabled>{{ customer.address }}</textarea><br />
+
+                    <label for="shipping_address">Factory Address</label>
+                    <textarea class="form-control" id="shipping_address" name="shipping_address" rows="3"
+                        disabled>{{ customer.shipping_address }}</textarea><br />
+
+                    <label for="gstn">GSTN</label>
+                    <input type="text" class="form-control" id="gstn" name="gstn" value="{{ customer.gstn }}"
+                        disabled><br />
+
+
+
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock content %}
+
+
+{% block extrascript %}
+
+<script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+    crossorigin="anonymous"></script>
+
+
+{% endblock extrascript %}

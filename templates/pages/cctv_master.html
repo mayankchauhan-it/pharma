@@ -1,0 +1,388 @@
+{% extends 'layouts/base.html' %} {% load static %} {% block title %} Add
+Customer {% endblock %} {% block extrastyle %}
+<style>
+  .limit-text {
+    max-width: 200px;
+    /* Set the desired maximum width for the cell */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    /* Add this if you want to indicate the cell is truncated */
+  }
+
+  .cur {
+    cursor: pointer;
+  }
+
+  /* Custom CSS for smaller textareas */
+  #id_shipping_address,
+  #id_address {
+    height: 100px;
+    /* Adjust the height as needed */
+  }
+
+  body.dark .modal-content {
+    background-color: #2C394B !important;
+    color: #fff !important;
+  }
+</style>
+{% endblock extrastyle %} {% block content %}
+
+<!-- Header -->
+<div class="header pb-3">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12 d-flex align-items-center justify-content-between">
+                  <h3 class="h2 text-danger font-weight-bold">CCTV</h3>
+                  <div>
+                    <button type="button" class="btn btn-danger font-weight-bold rounded" data-toggle="modal"
+                      data-target="#updateCategory">
+                      Add Brand
+                    </button>
+                    <button type="button" class="btn btn-danger font-weight-bold rounded" data-toggle="modal"
+                      data-target="#add_cctv_type">
+                      Add Type
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Customer List -->
+<div class="header pb-6">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12 d-flex align-items-center justify-content-end">
+                  <button type="button" id="cctv_brand_table_button" style="width: 150px" class="btn btn-danger font-weight-bold rounded">
+                    Brands
+                  </button>
+                  <button type="button" id="cctv_type_table_button" style="width: 150px"
+                    class="btn btn-danger font-weight-bold rounded mx-2">
+                    Type
+                  </button>
+                </div>
+              </div>
+              <hr />
+              {% comment %} Table for AC {% endcomment %}
+              <div class="card-body px-0 pt-0 pb-2">
+                <div class="table-responsive p-0">
+
+
+                  {% comment %} cctv Brands {% endcomment %}
+                  <table id="cctv_brand" style="display: none" class="table align-items-center mb-0">
+                    <thead>
+                      <tr>
+                        <!-- <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">
+                          No.
+                        </th> -->
+                        <th class="text-center text-uppercase font-weight-bolder opacity-7">
+                          CCTV Brands
+                        </th>
+                        <th class="text-center text-uppercase font-weight-bolder opacity-7">
+                          Edit
+                        </th>
+                        <th class="text-center text-uppercase font-weight-bolder opacity-7">
+                          Delete
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for brand in cctv_Brands %} {% if brand.name %}
+                      <tr>
+                        <!-- <td class="text-center font-weight-bolder opacity-7">
+                          <div class="d-flex px-2 py-1">
+                                                        <div>
+                                                            <img src="{% static 'img/team-2.jpg' %}" class="avatar avatar-sm me-3"
+                                                                alt="user1">
+                                                        </div>
+                                                    </div>
+                          <h6 class="mb-0 text-sm">{{forloop.counter}}</h6>
+                        </td> -->
+                        <td class="text-center font-weight-bolder opacity-7">
+                          <h6 class="mb-0 text-sm font-weight-bold text-secondary">{{ brand.name }}</h6>
+                        </td>
+                        <td class="text-center font-weight-bolder opacity-7">
+                          {% comment %}
+                          <a href="javascript:;"
+                            class="text-secondary font-weight-bold text-xs badge badge-sm bg-gradient-secondary"
+                            data-toggle="tooltip" data-original-title="Delete User">
+                            <span class="badge badge-sm bg-gradient-secondary">View</span>
+                          </a>
+                          {% endcomment %}
+
+                          <!-- Edit Button -->
+                          <button id="updateCctvBrand" type='button'
+                              class="updatecus btn text-xs badge badge-sm btn-danger rounded"
+                              data-toggle="modal" data-fid="{{ brand.name }}"
+                              data-target="#update_brand{{ brand.id }} ">
+                              <span class="text-white font-weight-bold text-xs ">Edit</span>
+                          </button>
+
+                          {% comment %}
+                          <button type="button" data-toggle="modal" class="btn btn-sm btn-info" data-bs-toggle="modal"
+                            data-bs-target="#updateCustomerModal{{ customer.id }}">
+                            Update
+                          </button>
+                          {% endcomment %}
+                        </td>
+                        
+                        <!-- Delete Button  -->
+                        <td class="text-center font-weight-bolder opacity-7">
+                            <button
+                                class="btn text-secondary font-weight-bold text-xs badge badge-sm btn-danger rounded font-weight-bold">
+                                <a href="{% url 'delete_models' id=brand.id field_type='brand'%}"
+                                    class="text-white font-weight-bold text-xs cur "
+                                    data-toggle="tooltip" data-original-title="Delete User"
+                                    onclick="return confirm('Are You Sure,You want to delete this data?');">Delete
+                            </button>
+                        </td>
+                      </tr>
+                      {% endif %}{% endfor %}
+                    </tbody>
+                  </table>
+
+
+
+                  {% comment %} cctv type {% endcomment %}
+                  <table id="cctv_type" style="display: none" class="table align-items-center mb-0">
+                    <thead>
+                      <tr>
+                        <!-- <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">
+                          No.
+                        </th> -->
+                        <th class="text-center text-uppercase font-weight-bolder opacity-7">
+                          CCTV Type
+                        </th>
+                        <th class="text-center text-uppercase font-weight-bolder opacity-7">
+                          Edit
+                        </th>
+                        <th class="text-center text-uppercase font-weight-bolder opacity-7">
+                          Delete
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for type in cctv_Types %} {% if type.name %}
+                      <tr>
+                        <!-- <td class="text-center font-weight-bolder opacity-7">
+                          <div class="d-flex px-2 py-1">
+                            <div>
+                              <img src="{% static 'img/team-2.jpg' %}" class="avatar avatar-sm me-3" alt="user1">
+                            </div>
+                          </div>
+                          <h6 class="mb-0 text-sm">{{forloop.counter}}</h6>
+                        </td> -->
+                        <td class="text-center font-weight-bolder opacity-7">
+                          <h6 class="mb-0 text-sm text-secondary font-weight-bold">{{ type.name }}</h6>
+                        </td>
+                        <td class="text-center font-weight-bolder opacity-7">
+                          {% comment %}
+                          <a href="javascript:;"
+                            class="text-secondary font-weight-bold text-xs badge badge-sm bg-gradient-secondary"
+                            data-toggle="tooltip" data-original-title="Delete User">
+                            <span class="badge badge-sm bg-gradient-secondary">View</span>
+                          </a>
+                          {% endcomment %}
+
+                          <!-- Edit Button -->
+                          <button id="updateCctvBrand" type='button'
+                              class="updatecus btn text-xs badge badge-sm btn-danger rounded"
+                              data-toggle="modal" data-fid="{{ type.name }}"
+                              data-target="#update_cctv_type{{type.id}}">
+                              <span class="text-white font-weight-bold text-xs">Edit</span>
+                          </button>
+
+                          {% comment %}
+                          <button type="button" data-toggle="modal" class="btn btn-sm btn-info" data-bs-toggle="modal"
+                            data-bs-target="#updateCustomerModal{{ customer.id }}">
+                            Update
+                          </button>
+                          {% endcomment %}
+                        </td>
+
+                        <!-- Delete Button  -->
+                        <td class="text-center font-weight-bolder opacity-7">
+                          <button
+                              class="btn text-secondary font-weight-bold text-xs badge badge-sm btn-danger rounded font-weight-bold">
+                              <a href="{% url 'delete_models' id=type.id field_type='type'%}"
+                                  class="text-white font-weight-bold text-xs cur "
+                                  data-toggle="tooltip" data-original-title="Delete User"
+                                  onclick="return confirm('Are You Sure,You want to delete this data?');">Delete
+                          </button>
+                      </td>
+                      </tr>
+                      {% endif %} {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% comment %} Add Brand {% endcomment %}
+<div class="modal fade" id="updateCategory" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger font-weight-bold">Add CCTV Brand</h5>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{% url 'cctv_master'%}">
+          {% csrf_token %}
+          <label for="model_name">Brand Name</label>
+          <input type="text" class="form-control" id="model_name" name="model_names" value=""
+            placeholder="Brand Name" /><br />
+          <button type="submit" class="btn btn-danger font-weight-bold rounded">Add Brand</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% comment %} Add Type {% endcomment %}
+<div class="modal fade" id="add_cctv_type" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger font-weight-bold">Add CCTV Type</h5>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{% url 'cctv_master'%}">
+          {% csrf_token %}
+          <label for="model_name">CCTV Type</label>
+          <input type="text" class="form-control" id="cctv_type" name="cctv_type" value=""
+            placeholder="Write the type" /><br />
+          <button type="submit" class="btn btn-danger font-weight-bold rounded">Add Type</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% comment %} Update Brand {% endcomment %}
+{% for brand in cctv_Brands %} {% if brand.name %}
+<div class="modal fade" id="update_brand{{ brand.id }}" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger font-weight-bold">Update CCTV Brands</h5>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{% url 'update_cctv_master' id=brand.id field_type='brand' %}">
+          {% csrf_token %}
+          <label for="model_name">Brand Name</label>
+          <input type="text" class="form-control" id="model_name" name="updated_name" value="{{ brand.name }}"
+            placeholder="Brand Name" /><br />
+          <button type="submit" class="btn btn-danger font-weight-bold rounded">Update Brand</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+
+
+{% comment %} Update Brand {% endcomment %}
+{% for type in cctv_Types %} {% if type.name %}
+<div class="modal fade" id="update_cctv_type{{type.id}}" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger font-weight-bold">Update CCTV Type</h5>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{% url 'update_cctv_master' id=type.id field_type='type' %}">
+          {% csrf_token %}
+          <label for="model_name">CCTV Type</label>
+          <input type="text" class="form-control" id="cctv_type" name="updated_name" value="{{ type.name }}"
+            placeholder="Write the type" /><br />
+          <button type="submit" class="btn btn-danger font-weight-bold rounded">Update Type</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+
+{% endblock content %} 
+
+
+{% block extra_js %}
+
+
+<script>
+  // Function to set the last selected table
+  function setLastSelectedTable(table) {
+      localStorage.setItem('lastSelectedTable', table);
+  }
+
+  // Function to get the last selected table
+  function getLastSelectedTable() {
+      return localStorage.getItem('lastSelectedTable');
+  }
+
+  // Function to show the last selected table
+  function showLastSelectedTable() {
+      const lastSelectedTable = getLastSelectedTable();
+      if (lastSelectedTable === 'brand') {
+          $("#cctv_brand").show();
+          $("#cctv_type").hide();
+      } else if (lastSelectedTable === 'type') {
+          $("#cctv_brand").hide();
+          $("#cctv_type").show();
+      } else {
+          $("#cctv_brand").show();
+      }
+  }
+
+  // Call the function to show the last selected table on page load
+  $(document).ready(function () {
+      showLastSelectedTable();
+  });
+
+  // Handle button clicks
+  $('#cctv_brand_table_button').click(function () {
+      console.log('clicked')
+      $("#cctv_brand").show();
+      $("#cctv_type").hide();
+      setLastSelectedTable('brand'); // Store the last selected table
+  });
+
+  $('#cctv_type_table_button').click(function () {
+    console.log('clicked')
+      $("#cctv_brand").hide();
+      $("#cctv_type").show();
+      setLastSelectedTable('type'); // Store the last selected table
+  });
+
+</script>
+
+{% endblock extra_js %}

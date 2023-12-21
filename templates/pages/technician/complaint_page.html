@@ -1,0 +1,163 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block breadcrumbs %}{% endblock breadcrumbs %}
+
+
+{% block extrastyle %}
+<style>
+  /* CSS for thumbnail images */
+  #selectedImages {
+    display: flex;
+  }
+
+
+  #selectedImages img {
+
+    width: 150px;
+    /* Set the width to your desired size */
+    height: 150px;
+    /* Set the height to your desired size */
+    object-fit: cover;
+    margin: 0px 5px;
+    /* Adjusts the aspect ratio of the image */
+  }
+</style>
+{% endblock extrastyle %}
+
+
+{% block content %}
+
+<!-- [ Main Content ] start -->
+<div class="row">
+  {% comment %} Left Section {% endcomment %}
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-block">
+        <div class="d-flex align-items-center justify-content-center flex-column">
+          <div class="w-50 p-3">
+            <img src="https://via.placeholder.com/500" alt="profile image" class="img-fluid rounded-circle">
+          </div>
+          <div class="text-center">
+            <h4 class="font-weight-bold h6">TechNinja HR Solution</h4>
+            <p>1029, The Spire 2, Nr. Shital Park, 150 ft Ring Road, Rajkot.</p>
+          </div>
+        </div>
+
+        <div class="small font-weight-light mt-4 text-center text-muted">
+          <p class="font-italic text-muted">+91-8141415146</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-sm-8">
+    <div class="card">
+      <div class="card-header">
+        <h5>Complaint Details</h5>
+      </div>
+      <div class="card-block">
+        {% comment %} Complaint Section {% endcomment %}
+        <div class="row">
+
+          <!-- Problem Description -->
+          <div class="col-sm-12 mb-2">
+            <div class="form-group">
+              <label for="problem">Complaint ID</label>
+              <input type="text" class="form-control" id="problem" value="112" disabled>
+            </div>
+          </div>
+
+          <!-- Problem Description -->
+          <div class="col-sm-12 mb-2">
+            <div class="form-group">
+              <label for="problem">Problem Description</label>
+              <input type="text" class="form-control" id="problem" value="AC Not Working" disabled>
+              <small class="font-weight-bold">Date: <span class="text-danger font-weight-bold">23-10-2023</span>
+              </small>
+            </div>
+          </div>
+
+
+          <!-- Status Section -->
+          <div class="col-sm-12 mb-2">
+            <div class="form-group">
+              <label for="status">Status</label>
+              <select class="form-control" id="status">
+                <option value="Pending">Pending</option>
+                <option value="Done">Done</option>
+                <option value="VisitAgain">Visit Again</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Image Upload Section -->
+          <div class="col-sm-6 mb-4">
+            <div class="form-group">
+              <label for="image">Upload Image</label>
+              <input type="file" class="form-control-file" id="image" capture="camera" multiple>
+            </div>
+            <div id="selectedImages"></div> <!-- Element to display selected images -->
+          </div>
+
+          <!-- Remark Section -->
+          <div class="col-sm-12 mb-2">
+            <div class="form-group">
+              <label for="abt">Remark</label>
+              <textarea type="email" class="form-control" id="abt" aria-describedby="emailHelp"
+                placeholder="Remark"></textarea>
+              <small id="abf" class="form-text text-muted">Write what you have done.</small>
+            </div>
+          </div>
+
+
+          <!-- Timer Buttons -->
+          <div class="col-sm-6 col-md-12 mb-2">
+            <div class="form-group">
+              <button type="button" class="btn btn-danger rounded">Start Timer</button>
+              <button type="button" class="btn btn-danger rounded">End Timer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+<!-- [ Main Content ] end -->
+
+{% endblock content %}
+
+{% block extra_js %}
+
+<script>
+  // Get a reference to the input element
+  const imageInput = document.getElementById('image');
+  // Get a reference to the element where selected images will be displayed
+  const selectedImages = document.getElementById('selectedImages');
+
+  // Add an event listener to the input element to capture the selected files
+  imageInput.addEventListener('change', function () {
+    // Clear the previous content
+    selectedImages.innerHTML = '';
+
+    // Iterate through selected files and display them
+    for (let i = 0; i < imageInput.files.length; i++) {
+      const file = imageInput.files[i];
+      const imageItem = document.createElement('div');
+
+      // Display the file name
+      // imageItem.innerText = file.name;
+
+      // You can also display thumbnails if needed
+      const thumbnail = document.createElement('img');
+      thumbnail.src = URL.createObjectURL(file);
+      imageItem.appendChild(thumbnail);
+
+      selectedImages.appendChild(imageItem);
+    }
+  });
+</script>
+{% endblock extra_js %}

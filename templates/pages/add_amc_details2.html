@@ -1,0 +1,282 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %} AMC Details {% endblock %}
+
+{% block extrastyle %}
+<style>
+    .card-body {
+        flex-grow: 1;
+    }
+
+    .limit-text {
+        max-width: 200px;
+        /* Set the desired maximum width for the cell */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        /* Add this if you want to indicate the cell is truncated */
+    }
+
+    .cur {
+        cursor: pointer
+    }
+
+    /* Custom CSS for smaller textareas */
+    #id_shipping_address,
+    #id_address {
+        height: 100px;
+        /* Adjust the height as needed */
+    }
+</style>
+
+{% endblock extrastyle %}
+
+
+{% block content %}
+
+<!-- Header -->
+<div class="header pb-3">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <div class="card card-stats">
+                        <!-- Card body -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 d-flex align-items-center justify-content-between">
+                                    <h3 class="h2 text-primary"> New AMC ADD </h3>
+                                    {% comment %} <button type="button" class="btn btn-warning bg-gradient-primary"
+                                        data-bs-toggle="modal" data-bs-target="#exampleModal">Add Customers</button>  {% endcomment %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Form Start -->
+<div class="header pb-10 ">
+    <div class="container-fluid ">
+        <div class="header-body ">
+            <div class="row mt-3 ">
+                <div class="col-md-12 ">
+                    <div class="card card-stats d-flex flex-column h-125">
+                        <div class="card-body mb-5 d-flex flex-column">
+                            <div class="row justify-content-center">
+                                <div class="col-md-12 d-flex p-5">
+                                    <form id="contact-form" name="contact-form" method="POST" class="w-100"
+                                        action="{% url 'new_amc_add' %}">
+                                        {% csrf_token %}
+                                        <!--Grid row-->
+                                        <div class="row">
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                <div
+                                                    class="md-form mb-3 d-flex flex-column mr-3 align-items-left align-contents-center">
+                                                    <label for="name" class="mt-2 text-left">Company Name</label>
+                                                    <select id="company_name_amc" name="company_field" class="form-control">
+                                                        <option value="" selected disabled>Select a Company</option>
+                                                        {% for customer in customer_list %}
+                                                        <option value="{{ customer.company_name }}">{{customer.company_name}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    
+                                                </div>
+                                            </div>
+                                            <!--Grid column-->
+
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                <div
+                                                    class="md-form mb-3 d-flex mr-3 align-items-left align-contents-center flex-column">
+                                                    <label for="name" class="mt-2 text-left">Representative Name</label>
+                                                    <select id="customer_name_amc" name="customer_field" class="form-control">
+                                                        <option value="" selected disabled>Select a Representative
+                                                        </option>
+                                                        {% for customer in customer_list %}
+                                                        <option value="{{ customer.customer_name }}">{{ customer.customer_name }}
+                                                        </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!--Grid column-->
+                                        </div>
+                                        <!--Grid row-->
+
+                                        <!--Grid row-->
+                                        <div class="row">
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                <div
+                                                    class="md-form mb-3 d-flex mr-3 align-items-left align-contents-center flex-column">
+                                                    <label for="date" class="mb-2 text-left">Start Date</label>
+                                                    <input type="date" class="form-control" id="start_date" name="start_date">
+                                                </div>
+                                            </div>
+                                            <!--Grid column-->
+
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                <div
+                                                    class="md-form mb-0 d-flex mr-3 align-items-left align-contents-center flex-column">
+                                                    <label for="date" class="mb-2 text-left">End Date</label>
+                                                    <input type="date" class="form-control" id="end_date" name="end_date">
+
+                                                </div>
+                                            </div>
+                                            <!--Grid column-->
+                                        </div>
+                                        <!--Grid row-->
+
+                                        <!--Grid row-->
+                                        <div class="row">
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                <div class="row">
+                                                    <div class="col-md-12 d-flex">
+                                                        <div class="md-form mb-0 d-flex align-items-left align-contents-center flex-column">
+                                                            <label for="shipping-address" class="mb-2 text-left">Services Product...    </label>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="col-md-12 d-flex mx-2">
+                                                        {% for choice in form.services.field.choices %}
+                                                        <div style='width: 120px' class="md-form mb-0 align-items-left align-contents-center">
+                                                            <input class="custom-control-input border" type="checkbox" id="id_service_{{ forloop.counter }}" name="services" value="{{ choice.0 }}">
+                                                            <label for="id_service_{{ forloop.counter }}">{{ choice.1 }}</label>
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
+
+        
+                                                    {% comment %} <div class="col-md-12 d-flex">
+                                                        <div style="width: 80px; margin-right: 30px;" class="custom-control custom-checkbox">
+                                                            <input class="custom-control-input border" type="checkbox" id="service_ac" name="service" value="Ac">
+                                                            <label for="service_ac">Ac</label><br>
+                                                        </div>
+                                                        <div style="width: 80px; margin-right: 30px;" class="custom-control custom-checkbox ">
+                                                            <input class="custom-control-input border" type="checkbox" id="service_cctv" name="service.." value="CCTV">
+                                                            <label for="service_cctv">CCTV</label><br>
+                                                        </div>
+                                                        <div class="width: 80px; custom-control custom-checkbox ">
+                                                            <input class="custom-control-input border" type="checkbox" id="service_computers" name="service..." value="Computers">
+                                                            <label for="service_computers">Computers</label><br><br>
+                                                        </div>
+                                                    </div> {% endcomment %}
+                                                </div>
+                                            </div>
+
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                <div
+                                                    class="md-form mb-3 d-flex mr-3 align-items-left align-contents-center flex-column">
+                                                    <label for="name" class="mt-2 text-left">Status</label>
+                                                    <select id="status" name="status_name" class="form-control">
+                                                        <option value="" selected disabled>Select a status</option>
+                                                        <option name="Active" value="Active" >Active</option>
+                                                        <option name="Expired" value="Expired" >Expired</option>
+                                                        <option name="Pending" value="Pending" >Pending</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!--Grid column-->
+                                        </div>
+                                        <hr>
+
+                                        <!--Button row-->
+                                        <div class="row mt-3">
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                <button type="submit" class="btn btn-warning bg-gradient-primary"
+                                                    data-bs-toggle="modal" data-bs-target="#exampleModal">Add
+                                                    Customers</button>
+                                            </div>
+                                            <!--Grid column-->
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+
+{% block scripts %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var copyCheckbox = document.getElementById("copy-address");
+
+        copyCheckbox.addEventListener("click", function () {
+            var companyAddress = document.getElementById("id_address");
+            var shippingAddress = document.getElementById("id_shipping_address");
+
+            if (copyCheckbox.checked) {
+                shippingAddress.value = companyAddress.value;
+            } else {
+                shippingAddress.value = "";
+            }
+        });
+    });
+
+
+</script>
+
+{% endblock scripts %}
+
+
+
+
+ {% comment %} <!-- Dropdown based on checkbox start -->
+ <div class="col-md-6">
+    <div class="md-form mb-3 d-flex mr-3 align-items-left align-contents-center flex-column">
+        <!-- <label for="name" class="mt-2 text-left">Status</label> -->
+        {% for data in productCategories %}
+        <div class="models-container mt-2" id="models_{{ data }}" style="display: none;">
+            <div class="d-flex gap-3">
+                <label for="shipping-address" class="mb-2 text-left w-25">Add {{ data }}</label>
+                <select name="dd" class="custom-select">
+                    <option value="">Select Model</option>
+                    {% for product in products %}
+                        {% if data|lower == product.category.name|lower %}
+                        <option value="{{ product }}">{{ product }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <input class="form-control basicAutoComplete" type="text" autocomplete="off" list="makelist" placeholder='Select Model'>
+                <datalist id="makelist">
+                    {% for product in product_list %}
+                            <option class="model-option {{ data|lower }}" value="{{ product }}"></option>
+                    {% endfor %}
+                </datalist>
+
+                <input id='quantity' name='quantity' type="number" placeholder='Enter Quantity'>
+
+                <select name="dd" class="custom-select">
+                    <option value="">Select Type</option>
+                    {% for product in products %}
+                        {% if data|lower == product.category.name|lower %}
+                        <option value="{{ product }}">{{ product.type }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<!-- Grid column --> {% endcomment %}

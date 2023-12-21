@@ -1,0 +1,273 @@
+{% extends 'layouts/base.html' %} {% load static %} {% block title %} AMC
+Details {% endblock %} {% block content %} {% block extrastyle %}
+<!-- Include the Select2 CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />  
+
+<style>
+  .card-body {
+    flex-grow: 1;
+  }
+
+  .limit-text {
+    max-width: 200px;
+    /* Set the desired maximum width for the cell */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    /* Add this if you want to indicate the cell is truncated */
+  }
+
+  .cur {
+    cursor: pointer;
+  }
+
+  /* Custom CSS for smaller textareas */
+  #id_shipping_address,
+  #id_address {
+    height: 100px;
+    /* Adjust the height as needed */
+  }
+
+</style>
+
+{% endblock extrastyle %}
+
+<!-- Header -->
+<div class="header pb-3">
+  <div class="container-fluid ">
+      <div class="header-body">
+          <div class="row mt-3">
+              <div class="col-md-12">
+                  <div class="card card-stats rounded bg-dark">
+                      <!-- Card body -->
+                      <div class="card-body">
+                          <div class="row">
+                              <div class="col-md-12 d-flex align-items-center justify-content-between">
+                                  <h3 class="h2 font-weight-bold  text-white"> Hospital Added...! </h3>
+                                  <!-- <button type="button" class="btn btn-light bg-gradient-primary font-weight-bold"
+                                      data-bs-toggle="modal" data-bs-target="#exampleModal">ADD NEW HOSPITAL</button> -->
+                                      <a href="{% url 'add_hospital' %}"
+                                     class="btn btn-light bg-gradient-primary font-weight-bold">
+                                      ADD NEW HOSPITAL
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+    <table id="hospitalTable" class="table table-bordered table-fixed text-center">
+        <thead>
+            <tr>
+                <th class="text-center">ID</th>
+                <th class="text-center">Hospital Name</th>
+                <th class="text-center">City</th>
+                <th class="text-center">State</th>
+                <th class="text-center">Address</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for hospital in hospitals %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ hospital.vHospitalName }}</td>
+                <td>{{ hospital.vCity }}</td>
+                <td>{{ hospital.vState }}</td>
+                <td>{{ hospital.vAddress }}</td>
+                <td>{{ hospital.eStatus }}</td>
+                <td>
+                    <button type="button" class="btn btn-dark rounded btn-sm" onclick="openEditModal({{ hospital.id }})">Edit</button>
+                    <a href="{% url 'delete_hospital' hospital.id %}" class="btn btn-danger rounded btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+<!-- Add this modal structure at the end of your HTML file, just before the closing </body> tag -->
+<div class="modal fade" id="editHospitalModal" tabindex="-1" role="dialog" aria-labelledby="editHospitalModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editHospitalModalLabel">Edit Hospital Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form to edit hospital details will go here -->
+                <form id="editHospitalForm">
+                    <!-- Hospital ID -->
+                    <div class="form-group">
+                        <label for="editHospital ID">Hospital ID:</label>
+                        <input type="text" class="form-control" id="editHospital_ID" name="EditHospital_ID">
+                    </div>
+
+                    <!-- Hospital Name -->
+                    <div class="form-group">
+                        <label for="editHospitalName">Hospital Name:</label>
+                        <input type="text" class="form-control" id="editHospitalName" name="editHospitalName" required>
+                    </div>
+
+                    <!-- City -->
+                    <div class="form-group">
+                        <label for="editCity">City:</label>
+                        <input type="text" class="form-control" id="editCity" name="editCity" required>
+                    </div>
+
+                    <!-- State -->
+                    <div class="form-group">
+                        <label for="editState">State:</label>
+                        <input type="text" class="form-control" id="editState" name="editState" required>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="form-group">
+                        <label for="editState">Address:</label>
+                        <input type="text" class="form-control" id="editaddress" name="editaddress" required>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="form-group">
+                        <label for="status" class="font-weight-bold">Status</label>
+                      <select name="editStatus" class="form-control">
+                        <option value="" selected disabled>Select Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                      </select>
+                    </div>
+
+                    <!-- Other fields can be added as needed -->
+
+                    <button type="button" class="btn btn-primary" onclick="saveEditedHospital()">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock content %} 
+
+
+{% block extra_js %}
+<!-- Bootstrap AutoComplete JS -->
+<script
+  src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@v2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Include the Select2 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+{% comment %} js for data table {% endcomment %}
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+      $('#hospitalTable').DataTable();
+    });
+  </script>
+
+<script>
+  $(document).ready(function () {
+
+    const searchInput = $('#searchInput');
+    const modelDropdown = $('#modelDropdown');
+
+    {% for data in productCategories %}
+    $('#checkbox_{{ data }}').on('change', function () {
+      var modelsContainer = $('#models_{{ data }}');
+
+      if ($(this).is(':checked')) {
+        modelsContainer.show();
+
+        {% for i in productCategories %}
+        console.log(i)
+        {% endfor %}
+
+      } else {
+        modelsContainer.hide();
+      }
+    });
+    {% endfor %}
+
+
+  });
+</script>
+
+
+<script>
+    function openEditModal(hospitalId) {
+        // Use AJAX to fetch hospital details based on hospitalId and populate the modal fields
+        $.ajax({
+            url: '{% url "get_hospital_details" %}',
+            type: 'GET',
+            data: { hospital_id: hospitalId },
+            success: function (data) {
+                // Populate modal fields
+                $('#editHospitalName').val(data.vHospitalName);
+                $('#editCity').val(data.vCity);
+                $('#editState').val(data.vState);
+                $('#editaddress').val(data.vAddress);
+
+                // Show the modal
+                $('#editHospitalModal').modal('show');
+            },
+            error: function (error) {
+                console.error('Error fetching hospital details:', error);
+            }
+        });
+    }
+
+    function saveEditedHospital() {
+        // Use AJAX to send the edited details to your Django view for saving
+        const csrftoken = getCookie('csrftoken');
+
+        $.ajax({
+            url: '{% url "save_edited_hospital" %}',
+            type: 'POST',
+            data: $('#editHospitalForm').serialize(), // Serialize the form data
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function (response) {
+                // Log the response (replace with your logic)
+                console.log('Save Edited Hospital Response:', response);
+
+                // Close the modal after saving changes
+                $('#editHospitalModal').modal('hide');
+            },
+            error: function (error) {
+                console.error('Error saving edited hospital details:', error);
+            }
+        });
+    }
+
+    // Function to get the CSRF token from the cookie
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Check if this cookie string begins with the name we want
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+</script>
+{% endblock extra_js %}

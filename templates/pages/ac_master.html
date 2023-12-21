@@ -1,0 +1,511 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %} Add Customer {% endblock %}
+
+{% block extrastyle %}
+<style>
+    .limit-text {
+        max-width: 200px;
+        /* Set the desired maximum width for the cell */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        /* Add this if you want to indicate the cell is truncated */
+    }
+
+    .cur {
+        cursor: pointer
+    }
+
+    /* Custom CSS for smaller textareas */
+    #id_shipping_address,
+    #id_address {
+        height: 100px;
+        /* Adjust the height as needed */
+    }
+
+    body.dark .modal-content {
+        background-color: #2C394B !important;
+        color: #fff !important;
+      }
+</style>
+{% endblock extrastyle %}
+
+
+{% block content %}
+
+<!-- Header -->
+<div class="header pb-3">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <div class="card card-stats rounded">
+                        <!-- Card body -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 d-flex align-items-center justify-content-between">
+                                    <h3 class="h2 text-danger font-weight-bold"> Air Conditioners </h3>
+                                    <div>
+                                        <button type="button" class="btn btn-danger rounded font-weight-bold"
+                                            data-toggle="modal" data-target="#add_brand">Add Brand</button>
+                                        <button type="button" class="btn btn-danger rounded font-weight-bold"
+                                            data-toggle="modal" data-target="#add_type">Add Type</button>
+                                        <button type="button" class="btn btn-danger rounded font-weight-bold"
+                                            data-toggle="modal" data-target="#add_size">Add Size</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer List -->
+<div class="header pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <div class="card card-stats rounded">
+                        <!-- Card body -->
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="col-md-12 d-flex align-items-center justify-content-end">
+                                    <button type="button" id="brand_button" style="width: 150px;" class='btn btn-danger rounded font-weight-bold'>BRAND</button>
+                                    <button type="button" id="type_button" style="width: 150px;" class='btn btn-danger rounded font-weight-bold mx-2'>TYPE</button>
+                                    <button type="button" id="size_button" style="width: 150px;" class='btn btn-danger rounded font-weight-bold mx-2'>SIZE</button>
+                                </div>
+                            </div>
+                            <hr>
+
+
+                            {% comment %} Table for AC {% endcomment %}
+                            <div class="card-body px-0 pt-0 pb-2">
+                                <div class="table-responsive p-0">
+                                    <!-- Brands - AC -->
+                                    <table id="brand_table_new" style="display: none;" class="table align-items-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th
+                                                    class="text-center text-uppercase font-weight-bolder opacity-7">
+                                                    AC Brand
+                                                </th>
+                                                <th
+                                                    class="text-center text-uppercase font-weight-bolder opacity-7">
+                                                    Edit
+                                                </th>
+                                                <th
+                                                    class="text-center text-uppercase font-weight-bolder opacity-7">
+                                                    Delete
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for brand in ac_brands %}
+                                            {% if brand.name %}
+                                            <tr>
+                                                <td class="text-center font-weight-bolder opacity-7">
+
+                                                    <h6 class="mb-0 text-sm font-weight-bold text-secondary">{{ brand.name }}</h6>
+                                                </td>
+                                                <td class="text-center font-weight-bolder opacity-7">
+                                                    {% comment %} <a href="javascript:;"
+                                                        class="text-secondary font-weight-bold text-xs badge badge-sm bg-gradient-secondary"
+                                                        data-toggle="tooltip" data-original-title="Edit user">
+                                                        <span class="badge badge-sm bg-gradient-secondary">View</span>
+                                                    </a> {% endcomment %}
+
+                                                    <!-- Edit Button -->
+                                                    <button id="updateBrand" type='button'
+                                                        class="updatecus btn text-xs badge badge-sm btn-danger rounded"
+                                                        data-toggle="modal"
+                                                        data-target="#update_brand{{ brand.id }}">
+                                                        <span class="text-white font-weight-bold text-xs">Edit</span>
+                                                    </button>
+
+                                                    {% comment %}
+                                                    <button type="button" data-toggle="modal"
+                                                        class="btn btn-sm btn-info" data-bs-toggle="modal"
+                                                        data-bs-target="#updateCustomerModal{{ customer.id }}">
+                                                        Update
+                                                    </button>
+                                                    {% endcomment %}
+                                                </td>
+
+                                                <!-- Delete Button  -->
+                                                <td class="text-center opacity-7">
+                                                    <button
+                                                        class="btn btn-danger rounded font-weight-bold text-xs badge badge-sm">
+                                                        <a href="{% url 'delete_ac_master' id=brand.id field_type='brand' %}"
+                                                            class="text-white font-weight-bold text-xs cur "
+                                                            data-toggle="tooltip" data-original-title="Delete user"
+                                                            onclick="return confirm('Are You Sure,You want to delete this data?');">Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                    <!-- Type - AC -->
+                                    <table id="type_table" style="display: none;" class="table align-items-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th
+                                                    class="text-center text-uppercase font-weight-bolder opacity-7">
+                                                    AC Type
+                                                </th>
+                                                <th
+                                                    class="text-center text-uppercase font-weight-bolder opacity-7">
+                                                    Edit
+                                                </th>
+                                                <th
+                                                    class="text-center text-uppercase font-weight-bolder opacity-7">
+                                                    Delete
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for type in ac_type %}
+                                            {% if type.name %}
+                                            <tr>
+                                                <td class="text-center font-weight-bolder opacity-7">
+                                                    <h6 class="mb-0 text-sm font-weight-bold text-secondary">{{ type.name }}</h6>
+                                                </td>
+                                                <td class="text-center font-weight-bolder opacity-7">
+                                                    {% comment %} <a href="javascript:;"
+                                                        class="text-secondary font-weight-bold text-xs badge badge-sm bg-gradient-secondary"
+                                                        data-toggle="tooltip" data-original-title="Edit user">
+                                                        <span class="badge badge-sm bg-gradient-secondary">View</span>
+                                                    </a> {% endcomment %}
+
+                                                    <!-- Edit Button -->
+                                                    <button id="updateType" type='button'
+                                                        class="updatecus btn text-xs badge badge-sm btn-danger font-weight-bold rounded"
+                                                        data-toggle="modal" data-fid="{{ type.ac_type }}"
+                                                        data-target="#update_type{{ type.id }}">
+                                                        <span class="text-white font-weight-bold text-xs">Edit</span>
+                                                    </button>
+
+                                                    {% comment %}
+                                                    <button type="button" data-toggle="modal"
+                                                        class="btn btn-sm btn-info" data-bs-toggle="modal"
+                                                        data-bs-target="#updateCustomerModal{{ customer.id }}">
+                                                        Update
+                                                    </button>
+                                                    {% endcomment %}
+                                                </td>
+
+                                                <!-- Delete Button  -->
+                                                <td class="text-center font-weight-bolder opacity-7">
+                                                    <button
+                                                        class="btn text-xs badge badge-sm btn-danger font-weight-bold rounded">
+                                                        <a href="{% url 'delete_ac_master' id=type.id field_type='type' %}"
+                                                            class="text-white font-weight-bold text-xs cur "
+                                                            data-toggle="tooltip" data-original-title="Delete user"
+                                                            onclick="return confirm('Are You Sure,You want to delete this data?');">Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                    <!-- Size - AC -->
+                                    <table id="size_table" style="display: none;" class="table align-items-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th
+                                                    class="text-center text-uppercase font-weight-bolder opacity-7">
+                                                    AC SIZE
+                                                </th>
+                                                <th
+                                                    class="text-center text-uppercase font-weight-bolder opacity-7">
+                                                    Edit
+                                                </th>
+                                                <th
+                                                    class="text-center text-uppercase font-weight-bolder opacity-7">
+                                                    Delete
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for size in ac_size %}
+                                            {% if size.name %}
+                                            <tr>
+                                                <td class="text-center font-weight-bolder opacity-7">
+                                                    <h6 class="mb-0 text-sm font-weight-bold text-secondary">{{ size.name }} Tons</h6>
+                                                </td>
+                                                <td class="text-center font-weight-bolder opacity-7">
+                                                    {% comment %} <a href="javascript:;"
+                                                        class="text-secondary font-weight-bold text-xs badge badge-sm bg-gradient-secondary"
+                                                        data-toggle="tooltip" data-original-title="Edit user">
+                                                        <span class="badge badge-sm bg-gradient-secondary">View</span>
+                                                    </a> {% endcomment %}
+
+                                                    <!-- Edit Button -->
+                                                    <button type='button'
+                                                        class="updatecus btn text-secondary font-weight-bold text-xs badge badge-sm btn-danger font-weight-bold rounded"
+                                                        data-toggle="modal" data-fid="{{ size.name }}"
+                                                        data-target="#update_size{{ size.id }}">
+                                                        <span class="text-white font-weight-bold text-xs">Edit</span>
+                                                    </button>
+
+                                                    {% comment %}
+                                                    <button type="button" data-toggle="modal"
+                                                        class="btn btn-sm btn-info" data-bs-toggle="modal"
+                                                        data-bs-target="#updateCustomerModal{{ customer.id }}">
+                                                        Update
+                                                    </button>
+                                                    {% endcomment %}
+                                                </td>
+                                                
+                                                <!-- Delete Button  -->
+                                                <td class="text-center font-weight-bolder opacity-7">
+                                                    <button
+                                                        class="btn font-weight-bold text-xs badge badge-sm btn-danger font-weight-bold rounded">
+                                                        <a href="{% url 'delete_ac_master' id=size.id field_type='size'%}"
+                                                            class="text-white font-weight-bold text-xs cur "
+                                                            data-toggle="tooltip" data-original-title="Delete user"
+                                                            onclick="return confirm('Are You Sure,You want to delete this data?');">Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% comment %} Add Brand {% endcomment %}
+<div class="modal fade" id="add_brand" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add AC Brands</h5>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'ac_master'%}">
+                    {% csrf_token %}
+
+                    <label for="model_name">Brand Name</label>
+                    <input type="text" class="form-control" id="model_name" name="model_name" value=""
+                        placeholder='Brand Name' /><br />
+
+                    <button type="submit" class="btn btn-danger font-weight-bold rounded">Add Brand</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} Add Type {% endcomment %}
+<div class="modal fade" id="add_type" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add AC Type</h5>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'ac_master'%}">
+                    {% csrf_token %}
+
+                    <label for="model_type">Type</label>
+                    <input type="text" class="form-control" id="model_type" name="model_type" value=""
+                        placeholder='split/window/tower/etc.' /><br />
+
+                    <button type="submit" class="btn btn-danger font-weight-bold rounded">Add Type</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% comment %} Add Size {% endcomment %}
+<div class="modal fade" id="add_size" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add AC Size</h5>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'ac_master'%}">
+                    {% csrf_token %}
+
+                    <label for="model_price">Size</label>
+                    <input type="text" class="form-control" id="ac_size_id" name="ac_size" value=""
+                        placeholder='in tons' /><br />
+
+
+                    <button type="submit" class="btn btn-danger font-weight-bold rounded">Add Size</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% comment %} Update Brand {% endcomment %}
+{% for brand in ac_brands %}
+{% if brand.name %}
+<div class="modal fade" id="update_brand{{ brand.id }}" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger font-weight-bold">Add AC Brands</h5>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'update_ac_master' id=brand.id field_type='brand' %}">
+                    {% csrf_token %}
+
+                    <label for="model_name">Brand Name</label>
+                    <input type="text" class="form-control" id="model_name" name="updated_name" value="{{ brand.name }}"
+                        placeholder='Brand Name' /><br />
+
+                    <button type="submit" class="btn btn-danger font-weight-bold rounded">Update Brand Name</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}{% endfor %}
+
+{% comment %} Update Type {% endcomment %}
+{% for type in ac_type %}
+{% if type.name %}
+<div class="modal fade" id="update_type{{ type.id }}" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger font-weight-bold">Add AC Type</h5>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'update_ac_master' id=type.id field_type='type' %}">
+                    {% csrf_token %}
+
+                    <label for="model_type">Type</label>
+                    <input type="text" class="form-control" id="ac_type_update_change" name="updated_name" value="{{ type.name }}"
+                        placeholder='split/window/tower/etc.' /><br />
+
+                    <button type="submit" class="btn btn-danger font-weight-bold rounded">Update Type</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}{% endfor %}
+
+{% comment %} Update Size {% endcomment %}
+{% for size in ac_size %}
+{% if size.name %}
+<div class="modal fade" id="update_size{{ size.id }}" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger font-weight-bold">Add AC Size</h5>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'update_ac_master' id=size.id field_type='size' %}">
+                    {% csrf_token %}
+
+                    <label for="model_price">Size</label>
+                    <input type="text" class="form-control" id="ac_size_id" name="updated_name" value="{{ size.name }}"
+                        placeholder='in tons' /><br />
+
+                    <button type="submit" class="btn btn-danger font-weight-bold rounded">Update Size</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}{% endfor %}
+
+
+{% endblock content %}
+
+
+{% block extra_js %}
+
+
+    <script>
+        // Function to set the last selected table
+        function setLastSelectedTable(table) {
+            localStorage.setItem('lastSelectedTable', table);
+        }
+    
+        // Function to get the last selected table
+        function getLastSelectedTable() {
+            return localStorage.getItem('lastSelectedTable');
+        }
+    
+        // Function to show the last selected table
+        function showLastSelectedTable() {
+            $("#brand_table_new").show();
+            const lastSelectedTable = getLastSelectedTable();
+            if (lastSelectedTable === 'brand') {
+                $("#brand_table_new").show();
+                $("#type_table").hide();
+                $("#size_table").hide();
+            } else if (lastSelectedTable === 'type') {
+                $("#type_table").show();
+                $("#brand_table_new").hide();
+                $("#size_table").hide();
+            } else if (lastSelectedTable === 'size') {
+                $("#size_table").show();
+                $("#brand_table_new").hide();
+                $("#type_table").hide();
+            }
+        }
+    
+        // Call the function to show the last selected table on page load
+        $(document).ready(function () {
+            showLastSelectedTable();
+        });
+    
+        // Handle button clicks
+        $('#brand_button').click(function () {
+            $("#brand_table_new").show();
+            $("#type_table").hide();
+            $("#size_table").hide();
+            setLastSelectedTable('brand'); // Store the last selected table
+        });
+    
+        $('#type_button').click(function () {
+            $("#type_table").show();
+            $("#brand_table_new").hide();
+            $("#size_table").hide();
+            setLastSelectedTable('type'); // Store the last selected table
+        });
+    
+        $('#size_button').click(function () {
+            $("#size_table").show();
+            $("#brand_table_new").hide();
+            $("#type_table").hide();
+            setLastSelectedTable('size'); // Store the last selected table
+        });
+    </script>
+    
+
+
+{% endblock extra_js %}

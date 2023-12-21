@@ -1,0 +1,701 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% debug %}
+{% block title %} AMC Details {% endblock %}
+
+{% block extrastyle %}
+<style>
+    .limit-text {
+        max-width: 200px;
+        /* Set the desired maximum width for the cell */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        /* Add this if you want to indicate the cell is truncated */
+    }
+
+    .cur {
+        cursor: pointer;
+    }
+
+    /* Custom CSS for smaller textareas */
+    #id_shipping_address,
+    #id_address {
+        height: 100px;
+        /* Adjust the height as needed */
+    }
+
+    .bg-warning{
+        background-color: red !important;
+    }
+
+    .modal-xl{
+        max-width: 1200px; !important;
+    }
+
+    body.dark .modal-content {
+        background-color: #2C394B !important;
+        color: #fff !important;
+      }
+</style>
+{% endblock extrastyle %}
+
+{% block content %}
+
+<!-- Customer List -->
+<div class="header pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <div class="card card-stats">
+                        <!-- Card body -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 d-flex align-items-center justify-content-between">
+                                    <h3 class="h2 text-danger font-weight-bold">CCTV AMC List</h3>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="card-body px-0 pt-0 pb-2">
+                                <div class="table-responsive p-0">
+                                    <table id='AC_AMC_TABLE' class="table align-items-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    No.
+                                                </th>
+                                                <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    Company Name
+                                                </th>
+                                                <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7 d-none d-lg-table-cell">
+                                                    Brand
+                                                </th>
+                                                <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7 d-none d-lg-table-cell">
+                                                    Type
+                                                </th>
+
+                                                {% comment %} <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    DVR / NVR
+                                                </th> {% endcomment %}
+                                                {% comment %} <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    DVR Channels
+                                                </th> {% endcomment %}
+                                                {% comment %} <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    POE Switch
+                                                </th> {% endcomment %}
+                                                {% comment %} <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    POE Switch Channels
+                                                </th> {% endcomment %}
+                                                {% comment %} <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    Quantity of POE
+                                                </th> {% endcomment %}
+                                                <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7 d-none d-lg-table-cell">
+                                                    Total Quantity
+                                                </th>
+
+                                                <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7 ">
+                                                    Start Date
+                                                </th>
+                                                <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    End Date
+                                                </th>
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    Service Duration
+                                                </th>
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    Total Service
+                                                </th>
+
+                                                <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    Status
+                                                </th>
+
+                                                {% comment %} <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    Location
+                                                </th> {% endcomment %}
+
+                                                
+
+                                                <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    View / Edit Service
+                                                </th>
+                                                <th
+                                                    class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    Delete
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for cctv_amc in cctv_amc_list %}
+                                            <tr>
+                                                <td class="text-center font-weight-bold opacity-7">
+                                                    <!-- <div class="d-flex px-2 py-1">
+                                                        <div>
+                                                            <img src="{% static 'img/team-2.jpg' %}" class="avatar avatar-sm me-3"
+                                                                alt="user1">
+                                                        </div>
+                                                    </div> -->
+                                                    <h6 class="mb-0 text-sm">{{forloop.counter}}</h6>
+                                                </td>
+                                                <td class="text-center opacity-7">
+                                                    <h6 class="mb-0 text-sm text-secondary font-weight-bold">{{ cctv_amc.cctv_company_field|safe }}
+                                                    </h6>
+                                                </td>
+
+                                                <td class="text-center opacity-7 d-none d-lg-table-cell">
+                                                    <p class="text-xs font-weight-bold mb-0 limit-text">
+                                                        {% for brand in cctv_amc.cctv_brands.all %}
+                                                        {{ brand.name|upper }} <br>
+                                                        {% endfor %}
+                                                    </p>
+                                                </td>
+
+                                                <td class="text-center opacity-7 d-none d-lg-table-cell">
+                                                    <p class="text-xs font-weight-bold mb-0 limit-text">
+                                                        {% for type in cctv_amc.cctv_types.all %}
+                                                        {% if type.name %}
+                                                        {{ type.name|upper }} <br>
+                                                        {% else %}
+                                                        ---
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </p>
+                                                </td>
+
+                                                {% comment %} DVR NVR {% endcomment %}
+                                                {% comment %} <td class="text-center font-weight-bold opacity-7 ">
+                                                    <p class="text-xs font-weight-bold mb-0 limit-text ">
+                                                        {% for dvr_nvr in cctv_amc.dvr_nvr.all %}
+                                                        {% if dvr_nvr.name %}
+                                                        {{ dvr_nvr.name |upper }}<br>
+                                                        {% else %}
+                                                        ---
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </p>
+                                                </td> {% endcomment %}
+
+                                                {% comment %} DVR Channels {% endcomment %}
+                                                {% comment %} <td class="text-center font-weight-bold opacity-7">
+                                                    <p class="text-xs font-weight-bold mb-0 limit-text">
+                                                        {% for dv_channel in cctv_amc.dvr_nvr_channel.all %}
+                                                        {% if dv_channel.name %}
+                                                        {{ dv_channel.name }} <br>
+                                                        {% else %}
+                                                        ---
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </p>
+                                                </td> {% endcomment %}
+
+                                                {% comment %} <td class="text-center font-weight-bold opacity-7">
+                                                    <p class="text-xs font-weight-bold mb-0 limit-text">
+                                                        {% for poe_switch in cctv_amc.poe_switch.all %}
+                                                            {% if poe_switch.name %}
+                                                                {{ poe_switch.name|upper }} <br>
+                                                            {% else %}
+                                                                --- <br>
+                                                            {% endif %}
+
+                                                        {% endfor %}
+                                                    </p>
+                                                </td> {% endcomment %}
+
+                                                {% comment %} <td class="text-center font-weight-bold opacity-7">
+                                                    <p class="text-xs font-weight-bold mb-0 limit-text">
+                                                        {% for poe_switch_channel in cctv_amc.poe_switch_channel.all %}
+                                                        {% if poe_switch_channel.name %}
+                                                        {{ poe_switch_channel.name|upper }} <br>
+                                                        {% else %}
+                                                        --- <br>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </p>
+                                                </td> {% endcomment %}
+
+                                                {% comment %} <td class="text-center font-weight-bold opacity-7">
+                                                    <p class="text-xs font-weight-bold mb-0 limit-text">
+                                                        {% for poe_switch_qt in cctv_amc.poe_switch_quantity.all %}
+                                                            {% if poe_switch_qt.name %}
+                                                                {{ poe_switch_qt.name|upper }} <br>
+                                                            {% else %}
+                                                                --- <br>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </p>
+                                                </td> {% endcomment %}
+
+                                                <td class="text-center opacity-7 d-none d-lg-table-cell">
+
+                                                    {% for quantity in cctv_amc.cctv_quantity.all %}
+                                                        <p class="text-xs font-weight-bold mb-0 limit-text bg-status">
+                                                            {% if quantity.value %}
+                                                                {{ quantity.value }} <br>
+                                                            {% else %}
+                                                                --- <br>
+                                                            {% endif %}
+                                                        </p>
+                                                    {% endfor %}
+                                                </td>
+
+                                                <td class="text-center  opacity-7">
+                                                    <h6 class="mb-0 text-sm font-weight-bold text-secondary">
+                                                        {{ cctv_amc.cctv_start_date }}
+                                                    </h6>
+                                                </td>
+                                                <td class="text-center opacity-7">
+                                                    <h6 class="mb-0 text-sm font-weight-bold text-secondary">
+                                                        {{ cctv_amc.cctv_end_date }}
+                                                    </h6>
+                                                </td>
+                                                
+                                                <td class="text-center opacity-7">
+                                                    <h6 class="text-xs font-weight-bold text-secondary mb-0 limit-text">
+                                                        {{ cctv_amc.service_duration }}
+                                                    </h6>
+                                                </td>
+
+                                                <td class="text-center opacity-7">
+                                                    <h6 class="text-xs font-weight-bold text-secondary mb-0 limit-text">
+                                                        {{ cctv_amc.service }}
+                                                    </h6>
+                                                </td>
+
+                                                <td class="text-center opacity-7">
+
+                                                    <p class="text-xs font-weight-bold mb-0 limit-text p-2 {% if cctv_amc.cctv_status|lower == 'active' %} bg-success rounded text-white {% endif %} {% if cctv_amc.cctv_status|lower == 'expired' %} bg-warning rounded text-white {% endif %} {% if cctv_amc.cctv_status|lower == 'pending' %} bg-secondary rounded text-white {% endif %}">
+                                                        {{ cctv_amc.cctv_status|upper }} <br>
+                                                    </p>
+
+                                                </td>
+
+                                                {% comment %} <td class="text-center font-weight-bold opacity-7">
+                                                    <p class="text-xs font-weight-bold mb-0 limit-text">
+                                                        {% for location in cctv_amc.locations.all %}
+                                                        {% if location.name %}
+                                                        {{ location.name|upper }} <br>
+                                                        {% else %}
+                                                        --- <br>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </p>
+                                                </td> {% endcomment %}
+
+                                                
+
+                                                <td class="text-center font-weight-bold opacity-7">
+                                                    <!-- View Button -->
+                                                    <button id="updatecus" type='button'
+                                                        class="updatecus btn text-white font-weight-bold text-xs badge badge-sm bg-danger rounded"
+                                                        data-toggle="modal" data-fid="{{ cctv_amc.id }}"
+                                                        data-target="#viewCctvAmcDetails{{ cctv_amc.id }}">
+                                                        <span class="badge badge-md">View</span>
+                                                    </button>
+
+                                                    <!-- Edit Button -->
+                                                    <button id="updatecus" type="button"
+                                                        class="updatecus btn text-white font-weight-bold text-xs badge badge-md bg-danger rounded"
+                                                        data-toggle="modal" data-fid="{{ cctv_amc.id }}"
+                                                        data-target="#updateCustomerModal{{ cctv_amc.id }}">
+                                                        <span class="badge badge-md ">Edit</span>
+                                                    </button>
+
+                                                </td>
+
+                                                <!-- Delete Button  -->
+                                                <td class="text-center font-weight-bold opacity-7">
+                                                    <a href="/admin/Delete_cctv_AMC/{{ cctv_amc.id }}"
+                                                        class="btn bg-danger rounded text-white font-weight-bold text-xs cur"
+                                                        data-toggle="tooltip" data-original-title="Delete user"
+                                                        onclick="return confirm('Are You Sure,You want to delete this data?');">
+                                                        <span class="badge badge-sm">Delete</span>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- View Customer Modals -->
+{% for cctv_amc in cctv_amc_list %}
+<div class="modal fade" id="viewCctvAmcDetails{{ cctv_amc.id }}" style='z-index: 9999;' role="dialog"
+    aria-hidden="false">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Customer</h5>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="/admin/update_customer/{{ customer.id }}">
+                    {% csrf_token %}
+
+                    {% comment %} Company Details {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="company_name">Company Name</label>
+                            <input type="text" class="form-control" id="company_name" name="company_name"
+                                value="{{ cctv_amc.cctv_company_field }}" disabled><br />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="customer_name">Customer Name</label>
+                            <input type="text" class="form-control" id="customer_name" name="customer_name"
+                                value="{{ cctv_amc.cctv_customer_field }}" disabled><br />
+                        </div>
+                    </div>
+
+                    {% comment %} Dates {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="company_name">Start Date</label>
+                            <input type="text" class="form-control" id="company_name" name="company_name"
+                                value="{{ cctv_amc.cctv_start_date }}" disabled><br />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="customer_name">End Date</label>
+                            <input type="text" class="form-control" id="customer_name" name="customer_name"
+                                value="{{ cctv_amc.cctv_end_date }}" disabled><br />
+                        </div>
+                    </div>
+
+                    <hr>
+                    {% comment %} Brand & Type {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="shipping-address" class="mb-2 text-left">CCTV Brand</label>
+                            {% for data in cctv_amc.cctv_brands.all  %}
+                            <input name='cctv_brands' class="form-control mb-2" type="text"
+                                value="{{ data.name }}" disabled>
+                            {% endfor %}
+                            
+                        </div>
+                        <div class="col-md-4">
+                            <label for="customer_name">CCTV Types</label>
+                            {% for data in cctv_amc.cctv_types.all  %}
+                            <input type="text" class="form-control mb-2" id="customer_name" name="customer_name" value="{{ data.name }}" disabled>
+                            {% endfor %}
+
+                        </div>
+                        <div class="col-md-4">
+                            <label for="customer_name">CCTV Quantity</label>
+                            {% for quantity in cctv_amc.cctv_quantity.all %}
+                            <input type="text" class="form-control mb-2" id="customer_name" name="customer_name" value="{{ quantity.value }}" disabled>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+
+                    <hr>
+                    {% comment %} DVR / NVR {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="shipping-address" class="mb-2 text-left"> DVR / NVR </label>
+                            {% for dv_channel in cctv_amc.dvr_nvr.all %}
+                            <input  class="form-control mb-2" type="text"
+                                value="{{ dv_channel.name|upper }}" disabled>
+                            {% endfor %}
+                            
+                        </div>
+                        <div class="col-md-6">
+                            <label for="customer_name">DVR / NVR Channels</label>
+                            {% for data in cctv_amc.dvr_nvr_channel.all  %}
+                            <input type="text" class="form-control mb-2" id="customer_name" name="customer_name" value="{{ data.name }}" disabled>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                    
+
+                    <hr>
+                    {% comment %} POE Details {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="shipping-address" class="mb-2 text-left"> POE </label>
+                            {% for poe in cctv_amc.poe_switch.all %}
+                            <input  class="form-control mb-2" type="text" value="{{ poe.name|upper }}" disabled>
+                            {% endfor %}
+                        </div>
+
+                        {% for poe in cctv_amc.poe_switch.all %}
+                        {% if poe.name|upper == 'YES' %}
+                        <div class="col-md-4">
+                            <label for="customer_name">POE Switch Channels</label>
+                            {% for poe_switch_channel in cctv_amc.poe_switch_channel.all  %}
+                                {% if poe_switch_channel.name %}
+                                    <input type="text" class="form-control mb-2" id="customer_name" name="customer_name" value="{{ poe_switch_channel.name|upper }}" disabled>
+                                {% else %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="customer_name">POE Switch Quantity</label>
+                            {% for poe_switch_quantity in cctv_amc.poe_switch_quantity.all  %}
+                                {% if poe_switch_quantity.name %}
+                                    <input type="text" class="form-control mb-2" id="customer_name" name="customer_name" value="{{ poe_switch_quantity.name|upper }}" disabled>
+                                {% else %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+
+                    </div>
+
+                    {% comment %} Location & Service Details {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% comment %} Update Location {% endcomment %}
+                            <div class="form-group">
+                                <label for="type">Location</label>
+                                {% for location in cctv_amc.locations.all  %}
+                                <input type="text" class="form-control mb-2" id="cctv-location" name="update_location" value="{{ location.name|upper }}" disabled>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            {% comment %} Update Service Duration {% endcomment %}
+                            <div class="form-group">
+                                <label for="service-duration">Service Duration</label>
+                                <select class="form-control" id="services_duration" name="update_service_durations" disabled>
+                                    <option value="Monthly" {% if cctv_amc.service_duration == "Monthly" %}selected{% endif %}>Monthly</option>
+                                    <option value="Quarterly" {% if cctv_amc.service_duration == "Quarterly" %}selected{% endif %}>Quarterly</option>
+                                    <option value="Half-Yearly" {% if cctv_amc.service_duration == "Half-Yearly" %}selected{% endif %}>Half-Yearly</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            {% comment %} Update Total Service {% endcomment %}
+                            <div class="form-group">
+                                <label for="total-service">Total Service</label>
+                                <input type="number" class="form-control mb-2" id="cctv-total-service" name="update_total_services" value="{{ cctv_amc.service }}" disabled>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {% comment %} Status {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="shipping-address" class="mb-2 text-left"> Status </label>
+                            <input  class="form-control mb-2" type="text"
+                                value="{{ cctv_amc.cctv_status|upper }}" disabled>
+                            
+                        </div>
+                    </div>
+
+                    {% comment %} Close Button {% endcomment %}
+                    <button type="button" class="btn btn-danger rounded" data-bs-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+<!-- Update Customer Modals -->
+{% for cctv_amc in cctv_amc_list %}
+<div class="modal fade" id="updateCustomerModal{{  cctv_amc.id }}" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Customer</h5>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'update_cctv_amc_details' cctv_amc.id %}">
+                    {% csrf_token %}
+
+                    {% comment %} Company Details {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="company_name">Company Name</label>
+                            <input type="text" class="form-control" id="update_company_name" name="update_company_name"
+                                value="{{ cctv_amc.cctv_company_field}}" ><br />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="customer_name">Customer Name</label>
+                            <input type="text" class="form-control" id="update_customer_name" name="update_customer_name"
+                                value="{{ cctv_amc.cctv_customer_field }}" ><br />
+                        </div>
+                    </div>
+
+                    {% comment %} Dates {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="company_name">Start Date</label>
+                            <input type="date" class="form-control" id="update_starting_date" name="update_starting_date"
+                                value="{{ cctv_amc.cctv_start_date }}" ><br />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="customer_name">End Date</label>
+                            <input type="date" class="form-control" id="customer_name" name="update_ending_date"
+                                value="{{ cctv_amc.cctv_end_date }}" ><br />
+                        </div>
+                    </div>
+
+                    <hr>
+                    {% comment %} Brand & Type {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="update_cctv_brand" class="mb-2 text-left">CCTV Brand</label>
+                            {% for data in cctv_amc.cctv_brands.all  %}
+                            <input name='update_cctv_brands' class="form-control mb-2" type="text"
+                                value="{{ data.name }}" >
+                            {% endfor %}
+                            
+                        </div>
+                        <div class="col-md-4">
+                            <label for="update_cctv_type">CCTV Types</label>
+                            {% for data in cctv_amc.cctv_types.all  %}
+                            <input type="text" class="form-control mb-2" id="update_cctv_type" name="update_cctv_type" value="{{ data.name }}" >
+                            {% endfor %}
+
+                        </div>
+                        <div class="col-md-4">
+                            <label for="customer_name">CCTV Quantity</label>
+                            {% if cctv_amc.cctv_quantity.count == 0 %}
+                                <input type="text" class="form-control mb-2" id="updated_quantity" name="updated_quantity" value="">
+                            {% else %}
+                                {% for quantity in cctv_amc.cctv_quantity.all %}
+                                    <input type="text" class="form-control mb-2" id="updated_quantity" name="updated_quantity" value="{{ quantity.value }}">
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+
+                    <hr>
+                    {% comment %} DVR / NVR {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="shipping-address" class="mb-2 text-left"> DVR / NVR </label>
+                            {% for dv_channel in cctv_amc.dvr_nvr.all %}
+                            <input name='update_dvr_nvr' class="form-control mb-2" type="text"
+                                value="{{ dv_channel.name|upper }}" >
+                            {% endfor %}
+                            
+                        </div>
+                        <div class="col-md-6">
+                            <label for="customer_name">DVR / NVR Channels</label>
+                            {% for data in cctv_amc.dvr_nvr_channel.all  %}
+                            <input type="text" class="form-control mb-2" id="update_dvr_channel" name="update_dvr_channel" value="{{ data.name }}" >
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                    
+
+                    <hr>
+                    {% comment %} POE Details {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="shipping-address" class="mb-2 text-left"> POE </label>
+                            {% for poe in cctv_amc.poe_switch.all %}
+                            <input name='update_poe' class="form-control mb-2" type="text" value="{{ poe.name|upper }}" >
+                            {% endfor %}
+                        </div>
+
+                        {% for poe in cctv_amc.poe_switch.all %}
+                        {% if poe.name|upper == 'YES' %}
+                        <div class="col-md-4">
+                            <label for="customer_name">POE Switch Channels</label>
+                            {% for poe_switch_channel in cctv_amc.poe_switch_channel.all  %}
+                                {% if poe_switch_channel.name %}
+                                    <input type="text" class="form-control mb-2" id="update_poe_channels" name="update_poe_channels" value="{{ poe_switch_channel.name|upper }}" >
+                                {% else %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="customer_name">POE Switch Quantity</label>
+                            {% for poe_switch_quantity in cctv_amc.poe_switch_quantity.all  %}
+                                {% if poe_switch_quantity.name %}
+                                    <input type="text" class="form-control mb-2" id="update_poe_qt" name="update_poe_qt" value="{{ poe_switch_quantity.name|upper }}" >
+                                {% else %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+
+                    </div>
+
+                    {% comment %} Location & Service Details {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% comment %} Update Location {% endcomment %}
+                            <div class="form-group">
+                                <label for="type">Location</label>
+                                {% for location in cctv_amc.locations.all  %}
+                                <input type="text" class="form-control mb-2" id="cctv-location" name="update_location" value="{{ location.name|upper }}">
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            {% comment %} Update Service Duration {% endcomment %}
+                            <div class="form-group">
+                                <label for="service-duration">Service Duration</label>
+                                <select class="form-control" id="services_duration" name="update_service_durations">
+                                    <option value="Monthly" {% if cctv_amc.service_duration == "Monthly" %}selected{% endif %}>Monthly</option>
+                                    <option value="Quarterly" {% if cctv_amc.service_duration == "Quarterly" %}selected{% endif %}>Quarterly</option>
+                                    <option value="Half-Yearly" {% if cctv_amc.service_duration == "Half-Yearly" %}selected{% endif %}>Half-Yearly</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            {% comment %} Update Total Service {% endcomment %}
+                            <div class="form-group">
+                                <label for="total-service">Total Service</label>
+                                <input type="number" class="form-control mb-2" id="cctv-total-service" name="update_total_services" value="{{ cctv_amc.service }}">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {% comment %} Status {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="shipping-address" class="mb-2 text-left"> Status </label>
+                            <input name='cctv_amc_status' class="form-control mb-2" type="text"
+                                value="{{ cctv_amc.cctv_status|upper }}" >
+                            
+                        </div>
+                    </div>
+
+                    {% comment %} Submit Button {% endcomment %}
+                    <button type="submit" class="btn btn-danger rounded" data-bs-dismiss="modal">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock content %}

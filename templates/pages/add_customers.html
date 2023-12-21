@@ -1,0 +1,209 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %} Add Customer {% endblock %}
+
+{% block content %}
+
+{% block extrastyle %}
+<style>
+.card-body {
+        flex-grow: 1;
+    }
+
+    .limit-text {
+        max-width: 200px; /* Set the desired maximum width for the cell */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer; /* Add this if you want to indicate the cell is truncated */
+    }
+  
+    .cur{
+      cursor: pointer
+    }
+  
+    /* Custom CSS for smaller textareas */
+                          #id_shipping_address,
+                          #id_address {
+                              height: 100px; /* Adjust the height as needed */
+                          }
+</style>
+    
+{% endblock extrastyle %}
+
+
+
+<!-- Header -->
+<div class="header pb-3">
+    <div class="container-fluid ">
+        <div class="header-body">
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <div class="card card-stats rounded bg-danger">
+                        <!-- Card body -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 d-flex align-items-center justify-content-between">
+                                    <h3 class="h2 font-weight-bold  text-white"> Customers </h3>
+                                    {% comment %} <button type="button" class="btn btn-warning bg-gradient-primary"
+                                        data-bs-toggle="modal" data-bs-target="#exampleModal">Add Customers</button> {% endcomment %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Customer Form Start -->
+<div class="header">
+    <div class="container-fluid ">
+        <div class="header-body ">
+            <div class="row ">
+                <div class="col-md-12 ">
+                    <div class="card card-stats d-flex flex-column h-125 rounded">
+                        <div class="card-body mb-5 d-flex flex-column ">
+                            <div class="row justify-content-center">
+                                <div class="col-md-10 d-flex ">
+                                    <form id="contact-form" name="contact-form" method="POST" class="w-100" action="{% url 'add_customers' %}">
+                                        {% csrf_token %}
+                                        <!--Grid row-->
+                                        <div class="row">
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                {% comment %} <div class="md-form mb-3 d-flex flex-column mr-3 align-items-left align-contents-center">
+                                                    <label for="name" class="mt-2 text-left" >Company Name</label>
+                                                    {{addCustomerForm.company_name}}
+                                                </div> {% endcomment %}
+                                                <div class="form-group">
+                                                    <label >Company Name</label>
+                                                    <input type="text" class="form-control" placeholder="Write Company Name" name="company_name" id="Company_id">
+                                                  </div>
+                                            </div>
+                                            <!--Grid column-->
+
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                {% comment %} <div class="md-form mb-3 d-flex mr-3 align-items-left align-contents-center flex-column">
+                                                    <label for="name" class="mt-2 text-left" >Representative Name</label>
+                                                    {{addCustomerForm.customer_name}}
+                                                </div> {% endcomment %}
+                                                <div class="form-group">
+                                                    <label >Representative Name</label>
+                                                    <input type="text" class="form-control" placeholder="Write Representative Name" name="representative_name" id="representative_id">
+                                                  </div>
+                                            </div>
+                                            <!--Grid column-->
+                                        </div>
+                                        <!--Grid row-->
+                        
+                                        <!--Grid row-->
+                                        <div class="row">
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1" >Email address</label>
+                                                    <input type="email" class="form-control" id="Email_ID" name="email_id"
+                                                      aria-describedby="emailHelp" placeholder="Enter email">
+                                                    {% comment %} <small id="emailHelp" class="form-text text-muted">We'll never share your email with
+                                                      anyone else.</small> {% endcomment %}
+                                                  </div>
+                                            </div>
+                                            <!--Grid column-->
+                                            
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label >Mobile No.</label>
+                                                    <input type="number" class="form-control" placeholder="Mobile No" name="mobile_name" id="Mobile_ID">
+                                                  </div>
+                                            </div>
+                                            <!--Grid column-->
+                                        </div>
+                                        <!--Grid row-->
+                        
+                                        <!--Grid row-->
+                                        <div class="row">
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label >Company Address</label>
+                                                    <textarea class="form-control" name='company_address_name' id='Company_Address_ID'rows="3"></textarea>
+                                                </div>
+                                            </div>
+                                            <!--Grid column-->
+
+                                            <!--Grid column-->
+                                            <div class="col-md-6 d-flex flex-column">
+                                                <div class="form-group">
+                                                    <label >Factory Address</label>
+                                                    <textarea class="form-control" name='factory_address_name' id='Factory_Address_ID'rows="3"></textarea>
+                                                </div>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" id="copy-address" class="custom-control-input border">
+                                                    <label class="custom-control-label" for="copy-address">Copy Company Address to Factory Address</label>
+                                                </div>
+                                            </div>
+                                            <!--Grid column-->
+                                        </div>
+
+                                        <!--Grid row-->
+                                        <div class="row">
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label >GSTN</label>
+                                                    <input type="text" class="form-control" placeholder="Write GSTN" name="gstn_name" id="GSTN_ID">
+                                                  </div>
+                                            </div>
+                                            <!--Grid column-->
+                                        </div>
+
+                                        <!--Button row-->
+                                        <div class="row mt-3">
+                                            <!--Grid column-->
+                                            <div class="col-md-6">
+                                                <button type="submit" class="btn btn-danger bg-gradient-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Customers</button>
+                                            </div>
+                                            <!--Grid column-->
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+
+{% block extra_js %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var copyCheckbox = document.getElementById("copy-address");
+
+        copyCheckbox.addEventListener("click", function() {
+            var companyAddress = document.getElementById("Company_Address_ID");
+            var shippingAddress = document.getElementById("Factory_Address_ID");
+
+            if (copyCheckbox.checked) {
+                shippingAddress.value = companyAddress.value;
+            } else {
+                shippingAddress.value = "";
+            }
+        });
+    });
+
+
+</script>
+
+{% endblock extra_js %}

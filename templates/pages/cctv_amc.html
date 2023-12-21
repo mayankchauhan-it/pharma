@@ -1,0 +1,475 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %} AMC Details {% endblock %}
+
+{% block content %}
+
+{% block extrastyle %}
+<!-- Include the Select2 CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+<style>
+    .card-body {
+        flex-grow: 1;
+    }
+
+    .limit-text {
+        max-width: 200px;
+        /* Set the desired maximum width for the cell */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        /* Add this if you want to indicate the cell is truncated */
+    }
+
+    .cur {
+        cursor: pointer
+    }
+
+    /* Custom CSS for smaller textareas */
+    #id_shipping_address,
+    #id_address {
+        height: 100px;
+        /* Adjust the height as needed */
+    }
+</style>
+
+{% endblock extrastyle %}
+
+
+<!-- Header -->
+<div class="header pb-3">
+    <div class="container-fluid ">
+        <div class="header-body">
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <div class="card card-stats rounded bg-danger">
+                        <!-- Card body -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 d-flex align-items-center justify-content-between">
+                                    <h3 class="h2 font-weight-bold  text-white"> CCTV AMC Details </h3>
+                                    <button type="button" class="btn btn-danger rounded font-weight-bold"
+                                        data-bs-toggle="modal" data-bs-target="#exampleModal">Add Customers</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="header">
+    <div class="container-fluid ">
+        <div class="header-body ">
+            <div class="row mt-3 ">
+                <div class="col-md-12 ">
+                    <div class="card card-stats d-flex flex-column h-125 rounded">
+                        <div class="row justify-content-center">
+                            <div class="col-md-12 d-flex p-5">
+                                <form id="contact-form" name="contact-form" method="POST" class="w-100"
+                                    action="{% url 'add_cctv_amc' %}">
+                                    {% csrf_token %}
+
+                                    <div class="row">
+                                        <!--Company Name-->
+                                        <div class="col-md-6">
+                                            <div
+                                                class="md-form mb-3 d-flex flex-column mr-3 align-items-left align-contents-center">
+                                                <label for="name" class="mt-2 text-left">Company Name</label>
+                                                <select class="form-control" name="cctv_company_field" id="company_id">
+                                                    <option value="">Select the company</option>
+                                                    {% for data in customer_list %}
+                                                    <option value="{{ data.company_name }}">{{ data.company_name }}
+                                                    </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!--Company Name-->
+
+                                        <!--Representative Name-->
+                                        <div class="col-md-6">
+                                            <div
+                                                class="md-form mb-3 d-flex mr-3 align-items-left align-contents-center flex-column">
+                                                <label for="name" class="mt-2 text-left">Representative Name</label>
+                                                <select class="form-control" name="representative_name"
+                                                    id="representative_id">
+                                                    <option value="">Select the Representative</option>
+                                                    {% for data in customer_list %}
+                                                    <option value="{{ data.customer_name }}">{{ data.customer_name }}
+                                                    </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!--Representative Name-->
+                                    </div>
+
+                                    <div class="row">
+                                        <!--Start Date-->
+                                        <div class="col-md-6">
+                                            <div
+                                                class="md-form mb-3 d-flex mr-3 align-items-left align-contents-center flex-column">
+                                                <label for="date" class="mb-2 text-left">Start Date</label>
+                                                <input type="date" class="form-control" id="start_date_id"
+                                                    name="start_date_name">
+                                            </div>
+                                        </div>
+                                        <!--Start Date-->
+
+                                        <!--End Date-->
+                                        <div class="col-md-6">
+                                            <div
+                                                class="md-form mb-0 d-flex mr-3 align-items-left align-contents-center flex-column">
+                                                <label for="date" class="mb-2 text-left">End Date</label>
+                                                <input type="date" class="form-control" id="end_date_id"
+                                                    name="end_date_name">
+                                                <!-- {{form.end_date}} -->
+                                            </div>
+                                        </div>
+                                        <!--End Date-->
+                                    </div>
+
+                                    <div class="row">
+                                        <div id="ac_box" class="col-md-12 mt-3 mb-3">
+                                            <div id="ac-select" name='ac-select-name'>
+                                                <div id='ac_select_form'
+                                                    class="col-md-5 col-lg-12 col-xl-12 d-flex justify-content-start flex-wrap border p-4 m-2">
+
+                                                    {% comment %} Brand Select {% endcomment %}
+                                                    <div
+                                                        class="md-form mb-0 d-flex align-items-left align-contents-center flex-column justify-content-center mx-2">
+                                                        <label for="shipping-address" class="mb-2 text-left">CCTV
+                                                            Brand</label>
+                                                        <input name='cctv_brands' class="form-control basicAutoComplete"
+                                                            type="text" autocomplete="off" list="brandlist"
+                                                            placeholder='Select Model'>
+                                                        <datalist id="brandlist">
+                                                            {% for product in cctv_brand_name %}
+                                                            <option class="model-option {{ data|lower }}"
+                                                                value="{{ product.name|upper }}"></option>
+                                                            {% endfor %}
+                                                        </datalist>
+                                                    </div>
+
+                                                    {% comment %} Type Select {% endcomment %}
+                                                    <div
+                                                        class="md-form mb-0 d-flex align-items-left align-contents-center flex-column justify-content-center mx-2">
+                                                        <label for="shipping-address" class="mb-2 text-left">CCTV
+                                                            Type</label>
+                                                        <input name='cctv_types' class="form-control basicAutoComplete"
+                                                            type="text" autocomplete="off" list="typelist2"
+                                                            placeholder='Select Type'>
+                                                        <datalist id="typelist2">
+                                                            {% for tt in cctv_type_list %}
+                                                            <option class="model-option {{ data|lower }}"
+                                                                value="{{ tt.name|upper }}"></option>
+                                                            {% endfor %}
+                                                        </datalist>
+                                                    </div>
+
+                                                    {% comment %} DVR Select {% endcomment %}
+                                                    <div
+                                                        class="md-form mb-0 d-flex align-items-left align-contents-center flex-column justify-content-center mx-2">
+                                                        <label for="dvr_id" class="mb-2 text-left">DVR/NVR</label>
+                                                        <select class="form-control" class="w-100 pe-5" name="dvr_nvr"
+                                                            id="dvr_id">
+                                                            <option value="dvr">DVR</option>
+                                                            <option value="nvr">NVR</option>
+                                                        </select>
+                                                    </div>
+
+                                                    {% comment %} Channels {% endcomment %}
+                                                    <div id='dvr_channels'
+                                                        class="md-form mb-0 d-flex align-items-left align-contents-center flex-column justify-content-center mx-2 dvr_qt">
+                                                        <label for="Channels" class="mb-2 text-left">Channels</label>
+                                                        <input class="form-control" id='Channels' name='Dvr_Channel'
+                                                            type="number" placeholder='Enter Channels'>
+                                                    </div>
+
+
+
+                                                    {% comment %} POE SWITCH {% endcomment %}
+                                                    <div
+                                                        class="md-form mb-0 d-flex align-items-left align-contents-center flex-column justify-content-center mx-2">
+                                                        <label for="dvr_id" class="mb-2 text-left ">POE Switch</label>
+                                                        <select class="w-100 pe-5 poe form-control" name="Poe_Switch"
+                                                            id="poe_id">
+                                                            <option value="yes">Yes</option>
+                                                            <option value="no">No</option>
+                                                        </select>
+                                                    </div>
+
+                                                    {% comment %} Poe Channels {% endcomment %}
+                                                    <div id='poe_channels'
+                                                        class="md-form mb-0 d-flex align-items-left align-contents-center flex-column justify-content-center mx-2 poe_switch_qt">
+                                                        <label for="shipping-address" class="mb-2 text-left">POE
+                                                            Channels</label>
+                                                        <input class="form-control" id='peo_Channels'
+                                                            name='Poe_Switch_channel' type="number"
+                                                            placeholder='Enter POE Channels'>
+                                                    </div>
+
+                                                    {% comment %} POE SWITCH Quantity {% endcomment %}
+                                                    <div id='poe_quantity'
+                                                        class="md-form mb-0 d-flex align-items-left align-contents-center flex-column justify-content-center mx-2 poe-qt">
+                                                        <label for="poe_quantity_id" class="mb-2 text-left">POE Switch
+                                                            Quantity </label>
+                                                        <input class="form-control" id='poe_quantity_id'
+                                                            name='Poe_Switch_Quantity' type="number"
+                                                            placeholder='Enter POE Quantity'>
+                                                    </div>
+
+
+                                                    {% comment %} Camera Quantity Select {% endcomment %}
+                                                    <div
+                                                        class="md-form mb-0 d-flex align-items-left align-contents-center flex-column justify-content-center mx-2">
+                                                        <label for="shipping-address" class="mb-2 text-left">CCTV
+                                                            Quantity</label>
+                                                        <input class="form-control" id='quantity' name='cctv_quantity'
+                                                            type="number" placeholder='Enter CCTV Quantity'>
+                                                    </div>
+
+                                                    {% comment %} Location {% endcomment %}
+                                                    <div
+                                                        class="md-form mb-0 d-flex align-items-left align-contents-center flex-column justify-content-center mx-2">
+                                                        <label for="location"
+                                                            class="mb-2 text-left font-weight-bold">Location</label>
+                                                        <input class="form-control" id="location" name="location_name"
+                                                            type="text" placeholder="Enter location" />
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% comment %} Button Select {% endcomment %}
+                                        <div
+                                            class="md-form d-flex align-items-left align-contents-center flex-column justify-content-center mx-2 mb-3">
+                                            <div class="h-25">
+                                                <button id='add_new_ac' type="button"
+                                                    class="btn btn-danger rounded bg-gradient-primary px-5"
+                                                    data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                                    value="Add New">Add</button>
+                                                <button id='delete_button' type="button"
+                                                    class="btn btn-danger rounded bg-gradient-primary px-5"
+                                                    value="delete">delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Status Row -->
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div
+                                                class="md-form mb-3 d-flex mr-3 align-items-left align-contents-center flex-column">
+                                                <label for="name" class="mt-2 text-left">Status</label>
+                                                <select name="cctv_status" class="custom-select">
+                                                    <option value="Select Status" selected disabled>Select Status
+                                                    </option>
+                                                    {% for value, label in form.status.field.choices %}
+                                                    <option value="{{ value }}">{{ label }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div
+                                                class="md-form mb-3 d-flex mr-3 align-items-left align-contents-center flex-column">
+                                                <label for="serviceDuration"
+                                                    class="mt-2 text-left font-weight-bold">Service Duration</label>
+                                                <select name="service_duration" class="form-control">
+                                                    <option value="Select Status" selected disabled>Select Duration
+                                                    </option>
+                                                    <option value="30">Monthly</option>
+                                                    <option value="90">Quarterly</option>
+                                                    <option value="180">Half- Yearly</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div
+                                                class="md-form mb-3 d-flex mr-3 align-items-left align-contents-center flex-column">
+                                                <label for="totalService" class="mt-2 text-left font-weight-bold">Total
+                                                    Services</label>
+                                                <input name="total_service" class="form-control basicAutoComplete"
+                                                    type="number" autocomplete="off" list="brandlist"
+                                                    placeholder="Total Service" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--Button row-->
+                                    <div class="row mt-3">
+                                        <!--Grid column-->
+                                        <div class="col-md-12">
+                                            <button type="submit" class="btn btn-danger rounded px-5 font-weight-bold"
+                                                data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                Add Customers
+                                            </button>
+                                        </div>
+                                        <!--Grid column-->
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- <hr> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+{% endblock content %}
+
+
+{% block extra_js %}
+{% comment %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+    integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+    crossorigin="anonymous"></script> {% endcomment %}
+<!-- Bootstrap AutoComplete JS -->
+<script
+    src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@v2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Include the Select2 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+{% comment %}
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script> {% endcomment %}
+
+<script>
+    $(document).ready(function () {
+        const searchInput = $('#searchInput');
+        const modelDropdown = $('#modelDropdown');
+
+
+        {% for data in productCategories %}
+        $('#checkbox_{{ data }}').on('change', function () {
+            var modelsContainer = $('#models_{{ data }}');
+
+            if ($(this).is(':checked')) {
+                modelsContainer.show();
+
+                {% for i in productCategories %}
+                console.log(i)
+                {% endfor %}
+
+            } else {
+                modelsContainer.hide();
+            }
+        });
+        {% endfor %}
+
+
+
+        // Function to handle the show/hide functionality
+        function handleQuantityFieldVisibility(selectElement, quantityField) {
+            if (selectElement.val() === 'yes') {
+                quantityField.show();
+            } else {
+                quantityField.hide();
+            }
+        }
+
+
+        // Event delegation to handle the dynamic gender select
+        $('.poe').on('change', '.gender-select', function () {
+            const currentGenderSelect = $(this);
+            const currentQuantityField = currentGenderSelect.closest('.input-field').find('.quantity-field');
+            handleQuantityFieldVisibility(currentGenderSelect, currentQuantityField);
+        });
+
+        // Code for adding new fields
+        var selectFormTemplate = $('#ac_select_form').html();
+        counter = 0;
+        $('#add_new_ac').click(function () {
+            counter++;
+
+            var selectFormClone = $('<div>').html(selectFormTemplate);
+            selectFormClone.find('input').val('');
+            {% comment %} selectFormClone.css('display', 'flex'); {% endcomment %}
+
+            var cloneId = 'ac_select_form_' + counter;
+            selectFormClone.attr('id', cloneId);
+            selectFormClone.attr('class', 'col-md-5 col-lg-12 col-xl-12 d-flex justify-content-start flex-wrap border p-4 m-2');
+
+            $('#ac-select').append(selectFormClone);
+
+            // Bind the change event for the newly added "POE" switch select
+            $('#' + cloneId).change(function () {
+
+                // POE Dynamic Field
+                var currentPoeSelect = $(this).find('.poe');
+                var currentPoeQt = $(this).find('.poe-qt');
+                var currentPoeSwitchQt = $(this).find('.poe_switch_qt');
+
+                if (currentPoeSelect.val() === 'yes') {
+                    currentPoeQt.removeClass('d-none');
+                    currentPoeSwitchQt.removeClass('d-none');
+                } else {
+                    currentPoeQt.removeClass('d-flex').addClass('d-none');
+                    currentPoeSwitchQt.removeClass('d-flex').addClass('d-none');
+                }
+
+            });
+        });
+
+        $('#delete_button').click(function () {
+            if (counter > 0) {
+                $('#ac_select_form_' + counter).remove(); // Remove the most recently appended content
+                counter--; // Decrement the counter
+            }
+        });
+
+
+        $('.poe').change(function () {
+            if ($('#poe_id').val() === 'yes') {
+
+
+                $('.poe-qt').removeClass('d-none')
+                $('.poe_switch_qt').removeClass('d-none')
+            } else {
+
+                $('.poe-qt').removeClass('d-flex').addClass('d-none')
+                $('.poe_switch_qt').removeClass('d-flex').addClass('d-none')
+            }
+
+        });
+
+    });
+
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $("#start_date_id").on("change", function () {
+            const startDate = new Date($(this).val());
+            const endDate = new Date(startDate);
+
+            // Add one year to the start date
+            endDate.setFullYear(startDate.getFullYear() + 1);
+
+            // Format the end date as YYYY-MM-DD
+            const formattedEndDate = endDate.toISOString().slice(0, 10);
+
+            // Set the end date input field's value
+            $("#end_date_id").val(formattedEndDate);
+        });
+    });
+</script>
+
+
+{% endblock extra_js %}

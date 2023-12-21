@@ -1,0 +1,409 @@
+{% extends 'layouts/base.html' %} 
+{% load static %} 
+{% debug %} 
+{% block title %} AMC Details {% endblock %} 
+
+{% block extrastyle %}
+<style>
+    .limit-text {
+        max-width: 200px;
+        /* Set the desired maximum width for the cell */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        /* Add this if you want to indicate the cell is truncated */
+    }
+
+    .cur {
+        cursor: pointer;
+    }
+
+    /* Custom CSS for smaller textareas */
+    #id_shipping_address,
+    #id_address {
+        height: 100px;
+        /* Adjust the height as needed */
+    }
+
+    .bg-warning{
+        background-color: red !important;
+    }
+
+    .modal-xl{
+        max-width: 1200px; !important;
+    }
+
+    body.dark .modal-content {
+        background-color: #2C394B !important;
+        color: #fff !important;
+      }
+    
+</style>
+{% endblock extrastyle %} 
+
+{% block content %}
+
+<!-- Customer List -->
+<div class="header pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <!-- Card body -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 d-flex align-items-center justify-content-between">
+                                    <h3 class="h2 text-danger font-weight-bold">AC AMC List</h3>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="card-body px-0 pt-0 pb-2">
+                                <div class="table-responsive p-0">
+                                    <table id ='AC_AMC_TABLE' class="table align-items-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    No.
+                                                </th>
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    Company Name
+                                                </th>
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7 d-none d-lg-table-cell">
+                                                    Brand
+                                                </th>
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7 d-none d-lg-table-cell">
+                                                    Type
+                                                 </th>
+                                                 <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7 d-none d-lg-table-cell">
+                                                    Size
+                                                 </th>
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7 ">
+                                                    Status
+                                                </th>
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    Start Date
+                                                </th>
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    End Date
+                                                </th>
+                                                
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7 d-none d-lg-table-cell">
+                                                    Quantity
+                                                </th>
+                                                
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    Location
+                                                </th>
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    Service Duration
+                                                </th>
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    Total Service
+                                                </th>
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    View / Edit Service
+                                                </th>
+                                                <th class="text-center text-uppercase text-secondary font-weight-bold opacity-7">
+                                                    Delete
+                                                </th>
+                                            </tr>
+                                        </thead>
+
+
+                                        <tbody>
+                                            {% for data in amc_lists %}
+                                            <tr>
+                                                <td class="text-center font-weight-bold opacity-7">
+                                                    <!-- <div class="d-flex px-2 py-1">
+                                                        <div>
+                                                            <img src="{% static 'img/team-2.jpg' %}" class="avatar avatar-sm me-3"
+                                                                alt="user1">
+                                                        </div>
+                                                    </div> -->
+                                                    <h6 class="mb-0 text-sm">{{forloop.counter}}</h6>
+                                                </td>
+                                                <td class="text-center opacity-7">
+                                                    <h6 class="mb-0 text-sm font-weight-bold text-secondary">{{ data.company_field }}</h6>
+                                                </td>
+                                                
+                                                <td class="text-center opacity-7 d-none d-lg-table-cell">
+                                                    <h6 class="text-xs font-weight-bold text-secondary mb-0 limit-text">
+                                                        {% for brand in data.brands.all %}
+                                                            {{ brand.name|upper }}
+                                                        {% if not forloop.last %}<br>{% endif %}
+                                                    {% endfor %}
+                                                    </h6>
+                                                </td>
+
+                                                <td class="text-center font-weight-bold opacity-7 d-none d-lg-table-cell">
+                                                    <h6 class="text-xs font-weight-bold text-secondary mb-0 limit-text">
+                                                        {% for ac_type in data.types.all %}
+                                                            {{ ac_type.name|upper }}
+                                                        {% if not forloop.last %}<br>{% endif %}
+                                                    {% endfor %}
+                                                    </h6>
+                                                </td>
+
+                                                <td class="text-center font-weight-bold opacity-7 d-none d-lg-table-cell">
+                                                    <h6 class="text-xs font-weight-bold text-secondary mb-0 limit-text">
+                                                        {% for size in data.sizes.all %}
+                                                            {{ size.name }}
+                                                        {% if not forloop.last %}<br>{% endif %}
+                                                    {% endfor %}
+                                                    </h6>
+                                                </td>
+
+                                                
+                                                <td class="text-center font-weight-bold opacity-7">
+                                                    <h6 class="text-xs font-weight-bold mb-0 limit-text p-2 {% if data.status|lower == 'active' %} bg-success rounded text-white {% endif %} {% if data.status|lower == 'expired' %} bg-warning rounded text-white {% endif %} {% if data.status|lower == 'pending' %} bg-secondary rounded text-white {% endif %}">
+                                                        {{ data.status|upper }}
+                                                    </h6>
+                                                </td>
+
+                                                <td class="text-center font-weight-bold opacity-7">
+                                                    <h6 class="text-xs font-weight-bold text-secondary mb-0 limit-text">
+                                                        {{ data.start_date }}
+                                                    </h6>
+                                                </td>
+
+                                                <td class="text-center opacity-7">
+                                                    <h6 class="text-xs font-weight-bold text-secondary mb-0 limit-text">
+                                                        {{ data.end_date }}
+                                                    </h6>
+                                                </td>
+                                                <td class="text-center opacity-7 d-none d-lg-table-cell">
+                                                    <h6 class="text-xs font-weight-bold text-secondary mb-0 limit-text ">
+                                                        {% for quantity in data.quantities.all %}
+                                                            {{ quantity.value }}
+                                                            {% if not forloop.last %}<br>{% endif %}
+                                                        {% endfor %}
+                                                    </h6>
+                                                </td>
+
+                                                <td class="text-center opacity-7">
+                                                    <h6 class="text-xs font-weight-bold text-secondary mb-0">
+                                                        {% for location in data.locations.all %}
+                                                            {{ location.name|upper  }}
+                                                            {% if not forloop.last %}, {% endif %}
+                                                        {% endfor %}
+                                                    </h6>
+                                                </td>
+
+                                                
+                                                <td class="text-center opacity-7">
+                                                    <h6 class="text-xs font-weight-bold text-secondary mb-0 limit-text">
+                                                        {{ data.service_duration }}
+                                                    </h6>
+                                                </td>
+
+                                                <td class="text-center opacity-7">
+                                                    <h6 class="text-xs font-weight-bold text-secondary mb-0 limit-text">
+                                                        {{ data.service }}
+                                                    </h6>
+                                                </td>
+                                                
+                                                <td class="text-center font-weight-bold opacity-7">
+                                                    <!-- Edit Button -->
+                                                    <button id="updatecus" type="button" class="updatecus btn text-secondary font-weight-bold text-xs badge badge-sm bg-danger rounded"
+                                                        data-toggle="modal" data-fid="{{ data.id }}"
+                                                        data-target="#viewAcAMCList{{ data.id }}">
+                                                        <span class="badge badge-sm font-weight-bold text-white">View / Edit</span>
+                                                    </button>
+                                                </td>
+
+                                                <!-- Delete Button  -->
+                                                <td class="text-center font-weight-bold opacity-7">
+                                                    <a href="/admin/Delete_ac_AMC/{{ data.id }}" class="btn bg-danger rounded font-weight-bold text-xs cur"
+                                                        data-toggle="tooltip" data-original-title="Delete user"
+                                                        onclick="return confirm('Are You Sure,You want to delete this data?');">
+                                                        <span class="badge badge-sm font-weight-bold text-white">Delete</span>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Customer Modals -->
+{% for data in amc_lists %}
+<div class="modal fade " id="viewAcAMCList{{ data.id }}" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl " role="document">
+        <div class="modal-content ">
+            <div class="modal-header">
+                <h5 class="modal-title font-weight-bold text-danger">Update AC AMC</h5>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'update_ac_amc' data.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                      <label for="company_name">Company Name</label>
+                      <input type="text" class="form-control" id="company_name" name="company_name" value="{{ data.company_field }}">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="brand">Brand</label>
+                                {% for data in data.brands.all  %}
+                                <input type="text" class="form-control mb-2" id="ac-brand" name="ac_Brand_View" value="{{ data.name }}">
+                                {% endfor %}
+                              </div>
+                        </div>
+                        <div class="col-md-6">
+                            {% comment %} Quantity {% endcomment %}
+                            <div class="form-group">
+                                <label for="quantity">Quantity</label>
+                                {% for quantity in data.quantities.all %}
+                                <input type="number" class="form-control mb-2" id="quantity-view" name="quantity_view" value="{{ quantity.value }}">
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            {% comment %} Update Type {% endcomment %}
+                            <div class="form-group">
+                                <label for="type">Type</label>
+                                {% for type in data.types.all  %}
+                                <input type="text" class="form-control mb-2" id="ac-type" name="ac_type_View" value="{{ type.name|upper }}">
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {% comment %} Update Size {% endcomment %}
+                            <div class="form-group">
+                                <label for="size">Size</label>
+                                {% for size in data.sizes.all %}
+                                <input type="text" class="form-control mb-2" id="ac-size" name="ac_size_View" value="{{ size.name }}">
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            {% comment %} Start Date {% endcomment %}
+                            <div class="form-group">
+                                <label for="date">Starting Date</label>
+                                <input type="date" class="form-control mt-2" id="st_date" name="ac_Brand_st_date" value="{{ data.start_date }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {% comment %} End Date {% endcomment %}
+                            <div class="form-group">
+                                <label for="date">Ending Date</label>
+                                <input type="date" class="form-control mt-2" id="end_date_id" name="ac_Brand_ed_date" value="{{ data.end_date }}">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {% comment %} Location & Service Details {% endcomment %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% comment %} Update Location {% endcomment %}
+                            <div class="form-group">
+                                <label for="type">Location</label>
+                                {% for location in data.locations.all  %}
+                                <input type="text" class="form-control mb-2" id="ac-location" name="update_location" value="{{ location.name|upper }}">
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            {% comment %} Update Service Duration {% endcomment %}
+                            <div class="form-group">
+                                <label for="service-duration">Service Duration</label>
+                                <select class="form-control" id="ac_service_duration" name="update_service_durations">
+                                    <option value="Monthly" {% if data.service_duration == "Monthly" %}selected{% endif %}>Monthly</option>
+                                    <option value="Quarterly" {% if data.service_duration == "Quarterly" %}selected{% endif %}>Quarterly</option>
+                                    <option value="Half-Yearly" {% if data.service_duration == "Half-Yearly" %}selected{% endif %}>Half-Yearly</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            {% comment %} Update Total Service {% endcomment %}
+                            <div class="form-group">
+                                <label for="total-service">Total Service</label>
+                                <input type="number" class="form-control mb-2" id="ac-total-service" name="update_total_services" value="{{ data.service }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    {% comment %} Update Status {% endcomment %}
+                    <div class="form-group">
+                      <label for="type">Status</label>
+                      <select class="form-control" id="status" name="ac_amc_status" value="{{ data.status }}">
+                        {% for status_value, status_label in ac_amc_status_choices %}
+                            <option value="{{ status_value }}" {% if data.status == status_value %}selected{% endif %}>
+                                {{ status_label }}
+                            </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <!-- Add more form fields for other details as needed -->
+                    <button type="submit" class="btn btn-danger font-weight-bold rounded">Update Details</button>
+                  </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %} 
+
+
+
+
+{% endblock content %}
+
+
+{% block extra_js %}
+<script>
+    $(document).ready(function () {
+
+        // Function to format a date as dd-mm-yyyy
+        function formatDate(date) {
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+            const year = date.getFullYear();
+            {% comment %} return `${day}-${month}-${year}`; {% endcomment %}
+            return `${year}-${month}-${day}`;
+        }
+
+        $(document).on('change', '#st_date', function() {
+            console.log("Start date");
+            const startDate = new Date($(this).val());
+            const endDate = new Date(startDate);
+    
+            // Add one year to the start date
+            endDate.setFullYear(startDate.getFullYear() + 1);
+    
+            // Format the end date as "dd-mm-yyyy" using formatDate function
+            const formattedEndDate = formatDate(endDate);
+    
+            // Set the end date input field's value attribute
+            $("#end_date_id").attr('value', formattedEndDate);
+            console.log("set");
+
+        });
+    
+        
+    });
+    
+    
+    
+    
+</script>
+
+
+{% endblock extra_js %}
