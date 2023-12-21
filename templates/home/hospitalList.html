@@ -67,11 +67,15 @@ Details {% endblock %} {% block content %} {% block extrastyle %}
             <tr>
                 <th class="text-center">ID</th>
                 <th class="text-center">Hospital Name</th>
-                <th class="text-center">City</th>
-                <th class="text-center">State</th>
-                <th class="text-center">Address</th>
-                <th class="text-center">Status</th>
-                <th class="text-center">Action</th>
+                <th class="text-center">Image</th>
+                <th class="text-center">Logo</th>
+                <th class="text-center">Patient Awareness Materials</th>
+                <th class="text-center">Hospital Timing</th>
+                <th class="text-center">Doctor Profile</th>
+                <th class="text-center">Facilities</th>
+                <th class="text-center">Achievements</th>
+                <th class="text-center">Social Media Links</th>
+                <th class="text-center">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -79,17 +83,158 @@ Details {% endblock %} {% block content %} {% block extrastyle %}
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ hospital.vHospitalName }}</td>
-                <td>{{ hospital.vCity }}</td>
-                <td>{{ hospital.vState }}</td>
-                <td>{{ hospital.vAddress }}</td>
-                <td>{{ hospital.eStatus }}</td>
-                <td>
-                    <button type="button" class="btn btn-dark rounded btn-sm" onclick="openEditModal({{ hospital.id }})">Edit</button>
-                    <a href="{% url 'delete_hospital' hospital.id %}" class="btn btn-danger rounded btn-sm">Delete</a>
+                <td class="text-center">
+                    <!-- View Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="viewHospital({{ hospital.id }})">
+                        <i class="fas fa-eye fa-xs"></i>
+                    </button>
+                    
+                    <!-- Edit Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="editHospital({{ hospital.id }})">
+                        <i class="fas fa-edit fa-xs"></i>
+                    </button>
+                    
+                    <!-- Delete Button -->
+                    <a href="{% url 'delete_hospital' hospital.id %}" class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;">
+                        <i class="fas fa-trash fa-xs"></i>
+                    </a>
+                </td>
+
+
+
+                <td class="text-center">
+                    <!-- View Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="viewHospital({{ hospital.id }})">
+                        <i class="fas fa-eye fa-xs"></i>
+                    </button>
+                    
+                    <!-- Edit Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="editHospital({{ hospital.id }})">
+                        <i class="fas fa-edit fa-xs"></i>
+                    </button>
+                    
+                    <!-- Delete Button -->
+                    <a href="{% url 'delete_hospital' hospital.id %}" class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;">
+                        <i class="fas fa-trash fa-xs"></i>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <!-- View Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="viewHospital({{ hospital.id }})">
+                        <i class="fas fa-eye fa-xs"></i>
+                    </button>
+                    
+                    <!-- Edit Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="editHospital({{ hospital.id }})">
+                        <i class="fas fa-edit fa-xs"></i>
+                    </button>
+                    
+                    <!-- Delete Button -->
+                    <a href="{% url 'delete_hospital' hospital.id %}" class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;">
+                        <i class="fas fa-trash fa-xs"></i>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <!-- View Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="viewHospital({{ hospital.id }})">
+                        <i class="fas fa-eye fa-xs"></i>
+                    </button>
+                    
+                    <!-- Edit Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="editHospital({{ hospital.id }})">
+                        <i class="fas fa-edit fa-xs"></i>
+                    </button>
+                    
+                    <!-- Delete Button -->
+                    <a href="{% url 'delete_hospital' hospital.id %}" class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;">
+                        <i class="fas fa-trash fa-xs"></i>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <!-- View Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="viewHospital({{ hospital.id }})">
+                        <i class="fas fa-eye fa-xs"></i>
+                    </button>
+                    
+                    <!-- Edit Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="editHospital({{ hospital.id }})">
+                        <i class="fas fa-edit fa-xs"></i>
+                    </button>
+                    
+                    <!-- Delete Button -->
+                    <a href="{% url 'delete_hospital' hospital.id %}" class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;">
+                        <i class="fas fa-trash fa-xs"></i>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <!-- View Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="viewHospital({{ hospital.id }})">
+                        <i class="fas fa-eye fa-xs"></i>
+                    </button>
+                    
+                    <!-- Edit Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="editHospital({{ hospital.id }})">
+                        <i class="fas fa-edit fa-xs"></i>
+                    </button>
+                    
+                    <!-- Delete Button -->
+                    <a href="{% url 'delete_hospital' hospital.id %}" class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;">
+                        <i class="fas fa-trash fa-xs"></i>
+                    </a>
+                </td>
+                <td class="text-center">
+                   <!-- View Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="viewHospital({{ hospital.id }})">
+                        <i class="fas fa-eye fa-xs"></i>
+                    </button>
+                    
+                    <!-- Edit Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="editHospital({{ hospital.id }})">
+                        <i class="fas fa-edit fa-xs"></i>
+                    </button>
+                    
+                    <!-- Delete Button -->
+                    <a href="{% url 'delete_hospital' hospital.id %}" class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;">
+                        <i class="fas fa-trash fa-xs"></i>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <!-- View Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="viewHospital({{ hospital.id }})">
+                        <i class="fas fa-eye fa-xs"></i>
+                    </button>
+                    
+                    <!-- Edit Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="editHospital({{ hospital.id }})">
+                        <i class="fas fa-edit fa-xs"></i>
+                    </button>
+                    
+                    <!-- Delete Button -->
+                    <a href="{% url 'delete_hospital' hospital.id %}" class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;">
+                        <i class="fas fa-trash fa-xs"></i>
+                    </a>
+                </td>
+
+                <td class="text-center">
+                    <!-- View Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="viewHospital({{ hospital.id }})">
+                        <i class="fas fa-eye fa-xs"></i>
+                    </button>
+                    
+                    <!-- Edit Button -->
+                    <button class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;" onclick="editHospital({{ hospital.id }})">
+                        <i class="fas fa-edit fa-xs"></i>
+                    </button>
+                    
+                    <!-- Delete Button -->
+                    <a href="{% url 'delete_hospital' hospital.id %}" class="btn btn-outline-dark btn-sm" style="padding: 0.15rem 0.3rem;">
+                        <i class="fas fa-trash fa-xs"></i>
+                    </a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
+        
     </table>
 </div>
 
