@@ -68,16 +68,27 @@
 
 
         {% comment %} Admin Side Bar {% endcomment %}
-        {% if request.user.is_authenticated and request.user.is_superuser and request.user.is_staff %}
+        {% comment %} {% if request.user.is_authenticated and request.user.is_superuser and request.user.is_staff %} {% endcomment %}
 
         {% comment %} Supplier {% endcomment %}
-        <li class="nav-item pcoded-hasmenu {% if 'hospital' in parent %}active pcoded-trigger{% endif %}">
-          <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i
-                class="feather icon-box"></i></span><span class="pcoded-mtext changed_color">Hospital</span></a>
-          <ul class="pcoded-submenu">
-            <li class=" {% if 'addHospital' in segment %}active{% endif %}"><a href="{% url 'add_hospital' %}" class="">Add Hospital</a></li>
-            <li class=" {% if 'hospitalList' in segment %}active{% endif %}"><a href="{% url 'hospital_list' %}" class="">Hospitals List</a></li>
-          </ul>
+        <li class="nav-item pcoded {% if 'hospitalList' in segment %}active pcoded-trigger{% endif %}">
+          <a href="{% url 'hospital_list' %}" class="nav-link "><span class="pcoded-micon"><i
+                class="feather icon-box"></i></span><span class="pcoded-mtext changed_color">Hospital Master</span></a>
+        </li>
+
+        <li class="nav-item pcoded {% if 'hospitalImg' in segment %}active pcoded-trigger{% endif %}">
+          <a href="{% url 'hospital_list_uploadImage' %}" class="nav-link "><span class="pcoded-micon"><i
+                class="feather icon-box"></i></span><span class="pcoded-mtext changed_color">Hospital Images</span></a>
+        </li>
+
+        <li class="nav-item pcoded {% if 'hospitalLogo' in segment %}active pcoded-trigger{% endif %}">
+          <a href="{% url 'hospitalLogo_list' %}" class="nav-link "><span class="pcoded-micon"><i
+                class="feather icon-box"></i></span><span class="pcoded-mtext changed_color">Hospital Logo</span></a>
+        </li>
+
+        <li class="nav-item pcoded {% if 'Patient Awareness' in segment %}active pcoded-trigger{% endif %}">
+          <a href="{% url 'patientawareness_List' %}" class="nav-link "><span class="pcoded-micon"><i
+                class="feather icon-box"></i></span><span class="pcoded-mtext changed_color">Hospital Patient Awareness</span></a>
         </li>
 
         {% comment %} Add AMC {% endcomment %}
@@ -127,7 +138,7 @@
         </li> {% endcomment %}
 
 
-        {% endif %}
+        {% comment %} {% endif %} {% endcomment %}
       </ul>
     </div>
   </div>

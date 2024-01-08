@@ -1,0 +1,264 @@
+{% extends 'layouts/base.html' %} {% load static %} {% block title %} AMC
+Details {% endblock %} {% block content %} {% block extrastyle %}
+<!-- Include the Select2 CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />  
+
+<style>
+  .card-body {
+    flex-grow: 1;
+  }
+
+  .limit-text {
+    max-width: 200px;
+    /* Set the desired maximum width for the cell */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    /* Add this if you want to indicate the cell is truncated */
+  }
+
+  .cur {
+    cursor: pointer;
+  }
+
+  /* Custom CSS for smaller textareas */
+  #id_shipping_address,
+  #id_address {
+    height: 100px;
+    /* Adjust the height as needed */
+  }
+
+</style>
+
+{% endblock extrastyle %}
+
+<!-- Header -->
+<div class="header pb-3">
+  <div class="container-fluid ">
+      <div class="header-body">
+          <div class="row mt-3">
+              <div class="col-md-12">
+                  <div class="card card-stats rounded bg-dark">
+                      <!-- Card body -->
+                      <div class="card-body">
+                          <div class="row">
+                              <div class="col-md-12 d-flex align-items-center justify-content-between">
+                                  <h3 class="h2 font-weight-bold  text-white"> ADD HOSPITAL LOGO </h3>
+                                      <a href="{% url 'upload_Logo' %}"
+                                     class="btn btn-light bg-gradient-primary font-weight-bold">
+                                      ADD NEW
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+    <table id="hospitalTable" class="table table-bordered table-fixed text-center">
+        <thead>
+            <tr>
+                <th class="text-center">No</th>
+                <th class="text-center">Hospital Name</th>
+                <th class="text-center">Hospital Logo</th>
+                <th class="text-center">MAC Address</th>
+                <th class="text-center">Created at</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for logo in logos %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ logo.hmid.vHospitalName }}</td>
+
+                {% comment %} Hospital Logo {% endcomment %}
+                <td class="text-center w-25">
+                    {% if logo.vLogo %}
+                    <img src="{{ logo.vLogo.url }}" alt="{{ image.vZipFileName }}" class="img-fluid w-25" name="hospitalImage">
+                    {% endif %}
+                </td>
+                {% comment %} MAC Address {% endcomment %}
+                <td class="text-center">
+                    {{ logo.vIP  }}
+                </td>
+
+                {% comment %} Created at {% endcomment %}
+                <td class="text-center">
+                    {{logo.dDateTime }}
+                </td>
+                {% comment %} action {% endcomment %}
+                <td class="text-center">
+                    
+                    <!-- Edit Button -->
+                    <button class="btn btn-outline-dark btn-md" style="padding: 0.15rem 0.3rem;" data-toggle="modal" data-fid="{{ logo.id }}"
+                    data-target="#editHospitalLogo{{ logo.id }}">
+                        <i class="fas fa-edit fa-md"></i>
+                    </button>
+                    
+                    <!-- Delete Button -->
+                    <a href="{% url 'delete_logo' logo.id %}" class="btn btn-outline-dark btn-md" style="padding: 0.15rem 0.3rem;">
+                        <i class="fas fa-trash fa-md"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        
+    </table>
+</div>
+
+
+
+{% for logo in logos %}
+<!-- Edit Modal -->
+<div class="modal fade" id="editHospitalLogo{{ logo.id }}" tabindex="-1" role="dialog" aria-labelledby="editHospitalModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editHospitalModalLabel">Edit Hospital Images</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form to edit hospital details will go here -->
+                <form enctype="multipart/form-data" id="editHospitalForm" method="post" action="{% url 'edit_logo' logo.id %}">
+                    {% csrf_token %}
+                    <!-- Hospital ID -->
+                    <div class="form-group" hidden>
+                        <label for="editHospital ID">Hospital ID:</label>
+                        <input type="text" class="form-control" id="editHospital_ID" name="EditHospital_ID" >
+                    </div>
+                
+                    <!-- Hospital Name -->
+                    <div class="form-group">
+                        <label for="editHospitalName">Hospital Name:</label>
+                        <input type="text" value="{{ logo.hmid.vHospitalName }}" class="form-control editHospitalName" id="editHospitalName" name="editHospitalName" required>
+                    </div>
+
+                     <!-- Hospital Image Row -->
+                     <div class="form-group">
+                        <label for="hospitalImage" class="font-weight-bold">Hospital Image</label>
+                        <input type="file" class="form-control" id="hospitalImage" name="edithospitalImage"
+                          accept="image/*" />
+                      </div>
+                
+                    <!-- Use type="submit" for the submit button -->
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+{% endblock content %} 
+
+
+{% block extra_js %}
+<!-- Bootstrap AutoComplete JS -->
+<script
+  src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@v2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Include the Select2 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+{% comment %} js for data table {% endcomment %}
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+      $('#hospitalTable').DataTable();
+    });
+  </script>
+
+<script>
+  $(document).ready(function () {
+
+    const searchInput = $('#searchInput');
+    const modelDropdown = $('#modelDropdown');
+
+    {% for data in productCategories %}
+    $('#checkbox_{{ data }}').on('change', function () {
+      var modelsContainer = $('#models_{{ data }}');
+
+      if ($(this).is(':checked')) {
+        modelsContainer.show();
+
+        {% for i in productCategories %}
+        console.log(i)
+        {% endfor %}
+
+      } else {
+        modelsContainer.hide();
+      }
+    });
+    {% endfor %}
+
+
+  });
+</script>
+
+
+<script>
+    function editHospital(hospitalId) {
+        // Use AJAX to fetch hospital details based on hospitalId and populate the modal fields
+        $.ajax({
+            url: '{% url "get_image_details" %}',
+            type: 'GET',
+            data: { hospital_id: hospitalId },
+            success: function (data) {
+                // Populate modal fields
+                console.log(data)
+                $('#editHospital_ID').val(data.id);
+                $('.editHospitalName').val(data.vHospitalName);
+                $('.editCity').val(data.vCity);
+                $('.editState').val(data.vState);
+                $('.editaddress').val(data.vAddress);  // Updated id attribute
+                $('#editURL').val(data.vURL);
+                $('.editStatus').val(data.eStatus);
+
+                // Show the modal
+                $('#editHospitalModal').modal('show');
+            },
+            error: function (error) {
+                console.error('Error fetching hospital details:', error);
+            }
+        });
+    }
+
+
+    function viewHospital(hospitalId) {
+        // Use AJAX to fetch hospital details based on hospitalId and populate the modal fields
+        $.ajax({
+            url: '{% url "get_image_details" %}',
+            type: 'GET',
+            data: { image_id: hospitalId },  // Updated parameter name
+            success: function (data) {
+                // Populate modal fields
+                console.log(data);
+                $('.editHospital_ID').val(data.id);
+                $('.viewURL').val(data.vURL);  // Updated class name
+                $('.editHospitalName').val(data.vHospitalName);
+                $('.editCity').val(data.vCity);
+                $('.editState').val(data.vState);
+                $('.viewAddress').val(data.vAddress);  // Updated class name
+                $('.editStatus').val(data.eStatus);
+    
+                // Show the modal
+                $('#viewHospitalModal').modal('show');
+            },
+            error: function (error) {
+                console.error('Error fetching hospital details:', error);
+            }
+        });
+    }
+</script>
+{% endblock extra_js %}
